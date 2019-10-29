@@ -19,6 +19,7 @@ tokens = (
           'DIV',
           'MOD',
           'PLUS',
+    #      'UMINUS',
           'MINUS',
           'IN',
           'CONS',
@@ -34,8 +35,10 @@ tokens = (
           'GT',
           'EQ',
           'BOOLEAN',
-          'HASHTAG'
+          'HASHTAG',
+          'SEMICOLON'
           )
+t_SEMICOLON = r';'
 t_HASHTAG = r'\#'
 t_L_PAREN = r'\('
 t_R_PAREN = r'\)'
@@ -47,6 +50,7 @@ t_MULT= r'\*'
 t_DIV = r'div'
 t_MOD = r'mod'
 t_PLUS = r'\+'
+#t_UMINUS = r'-'
 t_MINUS = r'-'
 t_IN = r'in'
 # t_CONS = r'::'
@@ -64,11 +68,13 @@ t_EQ   = r'='
 t_BOOLEAN = r'True|False'
 
 def t_INTEGER(t):
-    r'(-?)(\d+)'
+    #(-?)
+    r'(\d+)'
     t.value = NumNode(t.value)
     return t
 def t_FLOAT(t):
-    r'(-?)(((\d)*\.(\d+)((e(-?)\d+)?)))'
+    #(-?)
+    r'(((\d)*\.(\d+)((e(-?)\d+)?)))'
     t.value = NumNode(t.value)
     return t
 
@@ -98,7 +104,7 @@ def reduce(expr):
             expr = expr.eval()
         return expr
     else:
-        return None
+        return expr
 
 
 
@@ -109,9 +115,11 @@ class BinOpNode():
         self.e1 = e1
         self.e2 = e2
         self.op = op
+        self.type = "binop"
     def eval(self):
         e1 = reduce(self.e1)
         e2 = reduce(self.e2)
+
         if self.e1.type == 'num' and self.e1.type == 'num':
             if self.op == '**':
                 return e1 ** e2
@@ -122,6 +130,7 @@ class BinOpNode():
             if self.op == '%':
                 return e1 % e2
             if self.op == '+':
+                print(e1+e2)
                 return e1 + e2
             if self.op == '-':
                 return e1 - e2
@@ -133,6 +142,8 @@ class BooleanOpNode():
         self.e1 = e1
         self.e2 = e2
         self.op = op
+        self.type = "boolop"
+
     def eval(self):
         def eval(self):
             e1 = reduce(self.e1)
@@ -155,6 +166,17 @@ class BooleanOpNode():
             if self.op == '<':
                 return e1 < e2
 
+class TupleIndNode():
+    def __init__(self, list, ind):
+        if(ind.type == 'num'):
+            self.list =  list
+            self.ind = ind
+            self.type = "ind"
+        else:
+            print("SEMANTIC ERROR")
+            #semantic error
+    def eval(self):
+        return self.list[self.ind.eval()]
 
 class NumNode():
     def __init__(self, val):
@@ -166,13 +188,17 @@ class NumNode():
         else:
             return int(self.val)
 
+def p_line(t):
+    """line : expr SEMICOLON"""
+    t[0] = reduce(t[1])
+
 def p_expr(t):
     """expr : INTEGER
             | FLOAT
             | STRING
             | list
             | tuple"""
-    t[0] = t[1]
+    t[0] = (t[1])
 
 def p_binop_expr(t):
     """expr : expr POW expr
@@ -181,8 +207,11 @@ def p_binop_expr(t):
             | expr MOD expr
             | expr PLUS expr
             | expr MINUS expr"""
-    t[0] = BinOpNode(t[1],t[2],t[3]).eval()
+    t[0] = BinOpNode(t[1],t[2],t[3])
 
+def p_expr_uminus(t):
+     'expr : MINUS expr %prec UMINUS'
+     t[0] = BinOpNode(-t[2],'+','0')
 
 def p_boolop(t):
     """expr : expr AND_ALSO expr
@@ -223,7 +252,12 @@ def p_list(t):
 
 def p_list_index(t):
     """expr : list L_BRACK expr R_BRACK"""
-    t[0] = IndNode(t[1], t[3])
+    t[0] = ListIndNode(t[1], t[3])
+
+
+def p_parenthesized(t):
+    """expr : L_PAREN expr R_PAREN"""
+    t[0] = t[2]
 
 def p_tuple(t):
     """tuple : L_PAREN sequence R_PAREN
@@ -235,18 +269,7 @@ def p_tuple(t):
 
 def p_tuple_index(t):
     """expr : HASHTAG INTEGER tuple"""
-    t[0] = IndNode(t[3], t[2])
-
-#
-# def p_parenthesized(t):
-#     """parenthesized : L_PAREN expr R_PAREN"""
-#
-
-
-
-
-
-
+    t[0] = TupleIndNode(t[3], t[2]).eval()
 
 
 
@@ -260,8 +283,13 @@ def p_error(t):
 # grammar.
 precedence = (
 
+
+              # ('left', 'MINUS','PLUS'),
+              # ('left', 'MULT', 'DIV'),
               ('left', 'L_BRACK'),
-              ('left', 'L_PAREN')
+              ('left', 'L_PAREN'),
+
+              ('right', 'UMINUS')
               )
 
 parser = yacc.yacc()

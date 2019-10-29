@@ -67,16 +67,18 @@ t_GT = r'>'
 t_EQ   = r'='
 t_BOOLEAN = r'True|False'
 
-def t_INTEGER(t):
-    #(-?)
-    r'(\d+)'
-    t.value = NumNode(t.value)
-    return t
+
 def t_FLOAT(t):
     #(-?)
     r'(((\d)*\.(\d+)((e(-?)\d+)?)))'
     t.value = NumNode(t.value)
     return t
+def t_INTEGER(t):
+    #(-?)
+    r'(\d+)'
+    t.value = NumNode(t.value)
+    return t
+
 
 def t_STRING(t):
      r'(\"[^\"]*\")|(\'[^\']*\')'
@@ -97,11 +99,23 @@ def t_error(t):
     t.lexer.skip(1)
 
 lexer = lex.lex()
-
 def reduce(expr):
-    if expr != None and hasattr(expr, 'type'):
-        while(hasattr(expr, 'type')):
+    #print("EXPR:", expr)
+
+    if expr != None and hasattr(expr, 'nodeType'):
+        while(hasattr(expr, 'nodeType')):
+            # print("TEST BEFORE", flush = True)
+            # print(x)
+            # print(expr, flush = True)
             expr = expr.eval()
+            print("EXPR")
+            print(expr)
+            # print(expr, flush = True)
+            # print("TEST AFTER", flush = True)
+            # print(x)
+
+
+
         return expr
     else:
         return expr
@@ -115,12 +129,19 @@ class BinOpNode():
         self.e1 = e1
         self.e2 = e2
         self.op = op
-        self.type = "binop"
+        self.nodeType = "binop"
     def eval(self):
+        # print('test')
+        # print(self.e1)
+        # print(self.e2)
+        # print(reduce(self.e1) + reduce(self.e2))
+        # print('test')
+
+
         e1 = reduce(self.e1)
         e2 = reduce(self.e2)
 
-        if self.e1.type == 'num' and self.e1.type == 'num':
+        if (isinstance(e1, int) or isinstance(e1, float)) and (isinstance(e2, int) or isinstance(e2, float)):#self.e1.nodeType == 'num' and self.e1.nodeType == 'num':
             if self.op == '**':
                 return e1 ** e2
             if self.op == '*':
@@ -130,19 +151,22 @@ class BinOpNode():
             if self.op == '%':
                 return e1 % e2
             if self.op == '+':
-                print(e1+e2)
+                if isinstance(e1+e2, type(None)):
+                    print("ADD IS NONE")
                 return e1 + e2
             if self.op == '-':
                 return e1 - e2
-        if self.e1.type == 'string' and self.e1.type == 'string':
+        if isinstance(e1, str) and isinstance(e2, str):
             if self.op == '+':
                 return e1 + e2
+        else:
+            return 22
 class BooleanOpNode():
     def __init__(self, e1, op, e2):
         self.e1 = e1
         self.e2 = e2
         self.op = op
-        self.type = "boolop"
+        self.nodeType = "boolop"
 
     def eval(self):
         def eval(self):
@@ -168,10 +192,10 @@ class BooleanOpNode():
 
 class TupleIndNode():
     def __init__(self, list, ind):
-        if(ind.type == 'num'):
+        if(ind.nodeType == 'num'):
             self.list =  list
             self.ind = ind
-            self.type = "ind"
+            self.nodeType = "ind"
         else:
             print("SEMANTIC ERROR")
             #semantic error
@@ -181,7 +205,7 @@ class TupleIndNode():
 class NumNode():
     def __init__(self, val):
         self.val = val
-        self.type = "num"
+        self.nodeType = "num"
     def eval(self):
         if '.' in self.val:
             return float(self.val)
@@ -190,7 +214,13 @@ class NumNode():
 
 def p_line(t):
     """line : expr SEMICOLON"""
-    t[0] = reduce(t[1])
+    # print("FUCK")
+    # print(t[1].e1.e1.val)
+    # print(t[1].e1.e2.val)
+    # print(t[1].e2.val)
+    # print("FUCK")
+
+    t[0] = t[1].eval()
 
 def p_expr(t):
     """expr : INTEGER
@@ -211,7 +241,7 @@ def p_binop_expr(t):
 
 def p_expr_uminus(t):
      'expr : MINUS expr %prec UMINUS'
-     t[0] = BinOpNode(-t[2],'+','0')
+     t[0] = BinOpNode(-reduce(t[2]),'+',0)
 
 def p_boolop(t):
     """expr : expr AND_ALSO expr
@@ -283,9 +313,9 @@ def p_error(t):
 # grammar.
 precedence = (
 
+              #
+              ('left', 'MINUS','PLUS'),
 
-              # ('left', 'MINUS','PLUS'),
-              # ('left', 'MULT', 'DIV'),
               ('left', 'L_BRACK'),
               ('left', 'L_PAREN'),
 

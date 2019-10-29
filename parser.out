@@ -1945,59 +1945,43 @@ state 44
     (22) expr -> expr . IN expr
     (23) expr -> expr . CONS expr
 
-  ! shift/reduce conflict for POW resolved as shift
-  ! shift/reduce conflict for MULT resolved as shift
-  ! shift/reduce conflict for DIV resolved as shift
-  ! shift/reduce conflict for MOD resolved as shift
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for AND_ALSO resolved as shift
-  ! shift/reduce conflict for OR_ELSE resolved as shift
-  ! shift/reduce conflict for LTE resolved as shift
-  ! shift/reduce conflict for GTE resolved as shift
-  ! shift/reduce conflict for EQ_EQ resolved as shift
-  ! shift/reduce conflict for NEQ resolved as shift
-  ! shift/reduce conflict for LT resolved as shift
-  ! shift/reduce conflict for GT resolved as shift
-  ! shift/reduce conflict for IN resolved as shift
-  ! shift/reduce conflict for CONS resolved as shift
     SEMICOLON       reduce using rule 11 (expr -> expr PLUS expr .)
+    POW             reduce using rule 11 (expr -> expr PLUS expr .)
+    MULT            reduce using rule 11 (expr -> expr PLUS expr .)
+    DIV             reduce using rule 11 (expr -> expr PLUS expr .)
+    MOD             reduce using rule 11 (expr -> expr PLUS expr .)
+    PLUS            reduce using rule 11 (expr -> expr PLUS expr .)
+    MINUS           reduce using rule 11 (expr -> expr PLUS expr .)
+    AND_ALSO        reduce using rule 11 (expr -> expr PLUS expr .)
+    OR_ELSE         reduce using rule 11 (expr -> expr PLUS expr .)
+    LTE             reduce using rule 11 (expr -> expr PLUS expr .)
+    GTE             reduce using rule 11 (expr -> expr PLUS expr .)
+    EQ_EQ           reduce using rule 11 (expr -> expr PLUS expr .)
+    NEQ             reduce using rule 11 (expr -> expr PLUS expr .)
+    LT              reduce using rule 11 (expr -> expr PLUS expr .)
+    GT              reduce using rule 11 (expr -> expr PLUS expr .)
+    IN              reduce using rule 11 (expr -> expr PLUS expr .)
+    CONS            reduce using rule 11 (expr -> expr PLUS expr .)
     COMMA           reduce using rule 11 (expr -> expr PLUS expr .)
     R_BRACK         reduce using rule 11 (expr -> expr PLUS expr .)
     R_PAREN         reduce using rule 11 (expr -> expr PLUS expr .)
-    POW             shift and go to state 14
-    MULT            shift and go to state 15
-    DIV             shift and go to state 16
-    MOD             shift and go to state 17
-    PLUS            shift and go to state 18
-    MINUS           shift and go to state 19
-    AND_ALSO        shift and go to state 20
-    OR_ELSE         shift and go to state 21
-    LTE             shift and go to state 22
-    GTE             shift and go to state 23
-    EQ_EQ           shift and go to state 24
-    NEQ             shift and go to state 25
-    LT              shift and go to state 26
-    GT              shift and go to state 27
-    IN              shift and go to state 28
-    CONS            shift and go to state 29
 
-  ! POW             [ reduce using rule 11 (expr -> expr PLUS expr .) ]
-  ! MULT            [ reduce using rule 11 (expr -> expr PLUS expr .) ]
-  ! DIV             [ reduce using rule 11 (expr -> expr PLUS expr .) ]
-  ! MOD             [ reduce using rule 11 (expr -> expr PLUS expr .) ]
-  ! PLUS            [ reduce using rule 11 (expr -> expr PLUS expr .) ]
-  ! MINUS           [ reduce using rule 11 (expr -> expr PLUS expr .) ]
-  ! AND_ALSO        [ reduce using rule 11 (expr -> expr PLUS expr .) ]
-  ! OR_ELSE         [ reduce using rule 11 (expr -> expr PLUS expr .) ]
-  ! LTE             [ reduce using rule 11 (expr -> expr PLUS expr .) ]
-  ! GTE             [ reduce using rule 11 (expr -> expr PLUS expr .) ]
-  ! EQ_EQ           [ reduce using rule 11 (expr -> expr PLUS expr .) ]
-  ! NEQ             [ reduce using rule 11 (expr -> expr PLUS expr .) ]
-  ! LT              [ reduce using rule 11 (expr -> expr PLUS expr .) ]
-  ! GT              [ reduce using rule 11 (expr -> expr PLUS expr .) ]
-  ! IN              [ reduce using rule 11 (expr -> expr PLUS expr .) ]
-  ! CONS            [ reduce using rule 11 (expr -> expr PLUS expr .) ]
+  ! POW             [ shift and go to state 14 ]
+  ! MULT            [ shift and go to state 15 ]
+  ! DIV             [ shift and go to state 16 ]
+  ! MOD             [ shift and go to state 17 ]
+  ! PLUS            [ shift and go to state 18 ]
+  ! MINUS           [ shift and go to state 19 ]
+  ! AND_ALSO        [ shift and go to state 20 ]
+  ! OR_ELSE         [ shift and go to state 21 ]
+  ! LTE             [ shift and go to state 22 ]
+  ! GTE             [ shift and go to state 23 ]
+  ! EQ_EQ           [ shift and go to state 24 ]
+  ! NEQ             [ shift and go to state 25 ]
+  ! LT              [ shift and go to state 26 ]
+  ! GT              [ shift and go to state 27 ]
+  ! IN              [ shift and go to state 28 ]
+  ! CONS            [ shift and go to state 29 ]
 
 
 state 45
@@ -2020,59 +2004,43 @@ state 45
     (22) expr -> expr . IN expr
     (23) expr -> expr . CONS expr
 
-  ! shift/reduce conflict for POW resolved as shift
-  ! shift/reduce conflict for MULT resolved as shift
-  ! shift/reduce conflict for DIV resolved as shift
-  ! shift/reduce conflict for MOD resolved as shift
-  ! shift/reduce conflict for PLUS resolved as shift
-  ! shift/reduce conflict for MINUS resolved as shift
-  ! shift/reduce conflict for AND_ALSO resolved as shift
-  ! shift/reduce conflict for OR_ELSE resolved as shift
-  ! shift/reduce conflict for LTE resolved as shift
-  ! shift/reduce conflict for GTE resolved as shift
-  ! shift/reduce conflict for EQ_EQ resolved as shift
-  ! shift/reduce conflict for NEQ resolved as shift
-  ! shift/reduce conflict for LT resolved as shift
-  ! shift/reduce conflict for GT resolved as shift
-  ! shift/reduce conflict for IN resolved as shift
-  ! shift/reduce conflict for CONS resolved as shift
     SEMICOLON       reduce using rule 12 (expr -> expr MINUS expr .)
+    POW             reduce using rule 12 (expr -> expr MINUS expr .)
+    MULT            reduce using rule 12 (expr -> expr MINUS expr .)
+    DIV             reduce using rule 12 (expr -> expr MINUS expr .)
+    MOD             reduce using rule 12 (expr -> expr MINUS expr .)
+    PLUS            reduce using rule 12 (expr -> expr MINUS expr .)
+    MINUS           reduce using rule 12 (expr -> expr MINUS expr .)
+    AND_ALSO        reduce using rule 12 (expr -> expr MINUS expr .)
+    OR_ELSE         reduce using rule 12 (expr -> expr MINUS expr .)
+    LTE             reduce using rule 12 (expr -> expr MINUS expr .)
+    GTE             reduce using rule 12 (expr -> expr MINUS expr .)
+    EQ_EQ           reduce using rule 12 (expr -> expr MINUS expr .)
+    NEQ             reduce using rule 12 (expr -> expr MINUS expr .)
+    LT              reduce using rule 12 (expr -> expr MINUS expr .)
+    GT              reduce using rule 12 (expr -> expr MINUS expr .)
+    IN              reduce using rule 12 (expr -> expr MINUS expr .)
+    CONS            reduce using rule 12 (expr -> expr MINUS expr .)
     COMMA           reduce using rule 12 (expr -> expr MINUS expr .)
     R_BRACK         reduce using rule 12 (expr -> expr MINUS expr .)
     R_PAREN         reduce using rule 12 (expr -> expr MINUS expr .)
-    POW             shift and go to state 14
-    MULT            shift and go to state 15
-    DIV             shift and go to state 16
-    MOD             shift and go to state 17
-    PLUS            shift and go to state 18
-    MINUS           shift and go to state 19
-    AND_ALSO        shift and go to state 20
-    OR_ELSE         shift and go to state 21
-    LTE             shift and go to state 22
-    GTE             shift and go to state 23
-    EQ_EQ           shift and go to state 24
-    NEQ             shift and go to state 25
-    LT              shift and go to state 26
-    GT              shift and go to state 27
-    IN              shift and go to state 28
-    CONS            shift and go to state 29
 
-  ! POW             [ reduce using rule 12 (expr -> expr MINUS expr .) ]
-  ! MULT            [ reduce using rule 12 (expr -> expr MINUS expr .) ]
-  ! DIV             [ reduce using rule 12 (expr -> expr MINUS expr .) ]
-  ! MOD             [ reduce using rule 12 (expr -> expr MINUS expr .) ]
-  ! PLUS            [ reduce using rule 12 (expr -> expr MINUS expr .) ]
-  ! MINUS           [ reduce using rule 12 (expr -> expr MINUS expr .) ]
-  ! AND_ALSO        [ reduce using rule 12 (expr -> expr MINUS expr .) ]
-  ! OR_ELSE         [ reduce using rule 12 (expr -> expr MINUS expr .) ]
-  ! LTE             [ reduce using rule 12 (expr -> expr MINUS expr .) ]
-  ! GTE             [ reduce using rule 12 (expr -> expr MINUS expr .) ]
-  ! EQ_EQ           [ reduce using rule 12 (expr -> expr MINUS expr .) ]
-  ! NEQ             [ reduce using rule 12 (expr -> expr MINUS expr .) ]
-  ! LT              [ reduce using rule 12 (expr -> expr MINUS expr .) ]
-  ! GT              [ reduce using rule 12 (expr -> expr MINUS expr .) ]
-  ! IN              [ reduce using rule 12 (expr -> expr MINUS expr .) ]
-  ! CONS            [ reduce using rule 12 (expr -> expr MINUS expr .) ]
+  ! POW             [ shift and go to state 14 ]
+  ! MULT            [ shift and go to state 15 ]
+  ! DIV             [ shift and go to state 16 ]
+  ! MOD             [ shift and go to state 17 ]
+  ! PLUS            [ shift and go to state 18 ]
+  ! MINUS           [ shift and go to state 19 ]
+  ! AND_ALSO        [ shift and go to state 20 ]
+  ! OR_ELSE         [ shift and go to state 21 ]
+  ! LTE             [ shift and go to state 22 ]
+  ! GTE             [ shift and go to state 23 ]
+  ! EQ_EQ           [ shift and go to state 24 ]
+  ! NEQ             [ shift and go to state 25 ]
+  ! LT              [ shift and go to state 26 ]
+  ! GT              [ shift and go to state 27 ]
+  ! IN              [ shift and go to state 28 ]
+  ! CONS            [ shift and go to state 29 ]
 
 
 state 46
@@ -3188,38 +3156,6 @@ WARNING: shift/reduce conflict for LT in state 43 resolved as shift
 WARNING: shift/reduce conflict for GT in state 43 resolved as shift
 WARNING: shift/reduce conflict for IN in state 43 resolved as shift
 WARNING: shift/reduce conflict for CONS in state 43 resolved as shift
-WARNING: shift/reduce conflict for POW in state 44 resolved as shift
-WARNING: shift/reduce conflict for MULT in state 44 resolved as shift
-WARNING: shift/reduce conflict for DIV in state 44 resolved as shift
-WARNING: shift/reduce conflict for MOD in state 44 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 44 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 44 resolved as shift
-WARNING: shift/reduce conflict for AND_ALSO in state 44 resolved as shift
-WARNING: shift/reduce conflict for OR_ELSE in state 44 resolved as shift
-WARNING: shift/reduce conflict for LTE in state 44 resolved as shift
-WARNING: shift/reduce conflict for GTE in state 44 resolved as shift
-WARNING: shift/reduce conflict for EQ_EQ in state 44 resolved as shift
-WARNING: shift/reduce conflict for NEQ in state 44 resolved as shift
-WARNING: shift/reduce conflict for LT in state 44 resolved as shift
-WARNING: shift/reduce conflict for GT in state 44 resolved as shift
-WARNING: shift/reduce conflict for IN in state 44 resolved as shift
-WARNING: shift/reduce conflict for CONS in state 44 resolved as shift
-WARNING: shift/reduce conflict for POW in state 45 resolved as shift
-WARNING: shift/reduce conflict for MULT in state 45 resolved as shift
-WARNING: shift/reduce conflict for DIV in state 45 resolved as shift
-WARNING: shift/reduce conflict for MOD in state 45 resolved as shift
-WARNING: shift/reduce conflict for PLUS in state 45 resolved as shift
-WARNING: shift/reduce conflict for MINUS in state 45 resolved as shift
-WARNING: shift/reduce conflict for AND_ALSO in state 45 resolved as shift
-WARNING: shift/reduce conflict for OR_ELSE in state 45 resolved as shift
-WARNING: shift/reduce conflict for LTE in state 45 resolved as shift
-WARNING: shift/reduce conflict for GTE in state 45 resolved as shift
-WARNING: shift/reduce conflict for EQ_EQ in state 45 resolved as shift
-WARNING: shift/reduce conflict for NEQ in state 45 resolved as shift
-WARNING: shift/reduce conflict for LT in state 45 resolved as shift
-WARNING: shift/reduce conflict for GT in state 45 resolved as shift
-WARNING: shift/reduce conflict for IN in state 45 resolved as shift
-WARNING: shift/reduce conflict for CONS in state 45 resolved as shift
 WARNING: shift/reduce conflict for POW in state 46 resolved as shift
 WARNING: shift/reduce conflict for MULT in state 46 resolved as shift
 WARNING: shift/reduce conflict for DIV in state 46 resolved as shift

@@ -104,18 +104,7 @@ def reduce(expr):
 
     if expr != None and hasattr(expr, 'nodeType'):
         while(hasattr(expr, 'nodeType')):
-            # print("TEST BEFORE", flush = True)
-            # print(x)
-            # print(expr, flush = True)
             expr = expr.eval()
-            print("EXPR")
-            print(expr)
-            # print(expr, flush = True)
-            # print("TEST AFTER", flush = True)
-            # print(x)
-
-
-
         return expr
     else:
         return expr
@@ -131,13 +120,6 @@ class BinOpNode():
         self.op = op
         self.nodeType = "binop"
     def eval(self):
-        # print('test')
-        # print(self.e1)
-        # print(self.e2)
-        # print(reduce(self.e1) + reduce(self.e2))
-        # print('test')
-
-
         e1 = reduce(self.e1)
         e2 = reduce(self.e2)
 
@@ -169,26 +151,27 @@ class BooleanOpNode():
         self.nodeType = "boolop"
 
     def eval(self):
-        def eval(self):
-            e1 = reduce(self.e1)
-            e2 = reduce(self.e2)
+        e1 = reduce(self.e1)
+        e2 = reduce(self.e2)
+        print("OP:", self.op)
+        if self.op == '==':
+            return e1 == e2
+        if self.op == '!=':
+            return e1 != e2
+        if self.op == 'andalso':
+            return e1 and e2
+        if self.op == 'orelse':
+            return e1 or e2
+        if self.op == '<=':
+            return e1 <= e2
+        if self.op == '>=':
+            return e1 >= e2
+        if self.op == '>':
+            return e1 > e2
+        if self.op == '<':
+            return e1 < e2
 
-            if self.op == '==':
-                return e1 == e2
-            if self.op == '!=':
-                return e1 != e2
-            if self.op == 'andalso':
-                return e1 and e2
-            if self.op == 'orelse':
-                return e1 or e2
-            if self.op == '<=':
-                return e1 <= e2
-            if self.op == '>=':
-                return e1 >= e2
-            if self.op == '>':
-                return e1 > e2
-            if self.op == '<':
-                return e1 < e2
+
 
 class TupleIndNode():
     def __init__(self, list, ind):
@@ -214,18 +197,13 @@ class NumNode():
 
 def p_line(t):
     """line : expr SEMICOLON"""
-    # print("FUCK")
-    # print(t[1].e1.e1.val)
-    # print(t[1].e1.e2.val)
-    # print(t[1].e2.val)
-    # print("FUCK")
-
     t[0] = t[1].eval()
 
 def p_expr(t):
     """expr : INTEGER
             | FLOAT
             | STRING
+            | BOOLEAN
             | list
             | tuple"""
     t[0] = (t[1])
@@ -301,9 +279,6 @@ def p_tuple_index(t):
     """expr : HASHTAG INTEGER tuple"""
     t[0] = TupleIndNode(t[3], t[2]).eval()
 
-
-
-
 def p_error(t):
     print("SYNTAX ERROR")
 
@@ -313,12 +288,10 @@ def p_error(t):
 # grammar.
 precedence = (
 
-              #
-              ('left', 'MINUS','PLUS'),
 
+              ('left', 'MINUS','PLUS'),
               ('left', 'L_BRACK'),
               ('left', 'L_PAREN'),
-
               ('right', 'UMINUS')
               )
 

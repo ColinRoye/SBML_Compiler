@@ -1,7 +1,7 @@
 import sys
 import ply.lex as lex
 import ply.yacc as yacc
-
+import readline
 # mypl.py
 # Tokenizer, Parser, Evaluator for a simple propositional logic
 
@@ -13,13 +13,11 @@ tokens = (
           'R_PAREN', 'L_PAREN',
           'R_BRACK', 'L_BRACK',
           'COMMA',
-         # 'F_SLASH',
           'MULT',
           'POW',
           'DIV',
           'MOD',
           'PLUS',
-    #      'UMINUS',
           'MINUS',
           'IN',
           'CONS',
@@ -69,20 +67,18 @@ t_BOOLEAN = r'True|False'
 
 
 def t_FLOAT(t):
-    #(-?)
     r'(((\d)*\.(\d+)((e(-?)\d+)?)))'
     t.value = NumNode(t.value)
     return t
+
 def t_INTEGER(t):
-    #(-?)
     r'(\d+)'
     t.value = NumNode(t.value)
     return t
 
-
 def t_STRING(t):
      r'(\"[^\"]*\")|(\'[^\']*\')'
-     t.value = Node(t.value[1:-1])
+     t.value = StrNode(t.value[1:-1])
      return t
 
 # def t_VARIABLE(t):
@@ -109,10 +105,6 @@ def reduce(expr):
     else:
         return expr
 
-
-
-
-
 class BinOpNode():
     def __init__(self, e1, op, e2):
         self.e1 = e1
@@ -123,7 +115,7 @@ class BinOpNode():
         e1 = reduce(self.e1)
         e2 = reduce(self.e2)
 
-        if (isinstance(e1, int) or isinstance(e1, float)) and (isinstance(e2, int) or isinstance(e2, float)):#self.e1.nodeType == 'num' and self.e1.nodeType == 'num':
+        if (isinstance(e1, int) or isinstance(e1, float)) and (isinstance(e2, int) or isinstance(e2, float)):
             if self.op == '**':
                 return e1 ** e2
             if self.op == '*':
@@ -133,8 +125,6 @@ class BinOpNode():
             if self.op == '%':
                 return e1 % e2
             if self.op == '+':
-                if isinstance(e1+e2, type(None)):
-                    print("ADD IS NONE")
                 return e1 + e2
             if self.op == '-':
                 return e1 - e2
@@ -142,7 +132,7 @@ class BinOpNode():
             if self.op == '+':
                 return e1 + e2
         else:
-            return 22
+            return "SEMANTIC ERROR"
 class BooleanOpNode():
     def __init__(self, e1, op, e2):
         self.e1 = e1
@@ -171,9 +161,7 @@ class BooleanOpNode():
         if self.op == '<':
             return e1 < e2
 
-
-
-class TupleIndNode():
+class IndexNode():
     def __init__(self, list, ind):
         if(ind.nodeType == 'num'):
             self.list =  list
@@ -181,9 +169,14 @@ class TupleIndNode():
             self.nodeType = "ind"
         else:
             print("SEMANTIC ERROR")
-            #semantic error
     def eval(self):
-        return self.list[self.ind.eval()]
+        print("\nDEBUG")
+        print(self.list)
+        print("DEBUG\n")
+
+        return reduce(reduce(self.list)[reduce(self.ind)])
+
+
 
 class NumNode():
     def __init__(self, val):
@@ -194,6 +187,28 @@ class NumNode():
             return float(self.val)
         else:
             return int(self.val)
+
+class StrNode():
+    def __init__(self, val):
+        self.val = val
+        self.nodeType = "str"
+    def eval(self):
+        return self.val
+
+class ListNode():
+    def __init__(self, val):
+        self.val = val
+        self.nodeType = "list"
+    def eval(self):
+        return list(map(lambda x:reduce(x),self.val))
+
+class TupleNode():
+    def __init__(self, val):
+        self.val = val
+        self.nodeType = "tuple"
+    def eval(self):
+        return tuple(map(lambda x:reduce(x),self.val))
+
 
 def p_line(t):
     """line : expr SEMICOLON"""
@@ -241,6 +256,21 @@ def p_negationOp(t):
     t[0] = NegationOpNode(t[1],t[2])
 
 
+def p_list_index(t):
+    """expr : expr L_BRACK expr R_BRACK"""
+    t[0] = IndexNode(t[1], t[3])
+
+
+def p_list(t): #err
+    """list : L_BRACK sequence R_BRACK
+            | L_BRACK R_BRACK"""
+    if len(t) == 3:
+        t[0] = ListNode([])
+    else:
+        t[0] = ListNode(t[2]);
+
+
+
 
 def p_sequence(t):
        """sequence : expr COMMA sequence
@@ -250,17 +280,7 @@ def p_sequence(t):
        else:
            t[0] = [t[1]]
 
-def p_list(t):
-    """list : L_BRACK sequence R_BRACK
-            | L_BRACK R_BRACK"""
-    if len(t) == 3:
-        t[0] = []
-    else:
-        t[0] = t[2]
 
-def p_list_index(t):
-    """expr : list L_BRACK expr R_BRACK"""
-    t[0] = ListIndNode(t[1], t[3])
 
 
 def p_parenthesized(t):
@@ -273,11 +293,11 @@ def p_tuple(t):
     if len(t) == 3:
         t[0] = ()
     else:
-        t[0] = tuple(t[2])
+        t[0] = TupleNode(t[2])
 
 def p_tuple_index(t):
     """expr : HASHTAG INTEGER tuple"""
-    t[0] = TupleIndNode(t[3], t[2]).eval()
+    t[0] = IndexNode(t[3], t[2])
 
 def p_error(t):
     print("SYNTAX ERROR")
@@ -287,7 +307,6 @@ def p_error(t):
 # Manually setting precedence and associativity to resolve ambiguity in the
 # grammar.
 precedence = (
-
 
               ('left', 'MINUS','PLUS'),
               ('left', 'L_BRACK'),

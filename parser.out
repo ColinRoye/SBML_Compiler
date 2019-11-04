@@ -34,11 +34,11 @@ Rule 22    expr -> expr GT expr
 Rule 23    expr -> expr IN expr
 Rule 24    expr -> expr CONS expr
 Rule 25    expr -> NOT expr
-Rule 26    sequence -> expr COMMA sequence
-Rule 27    sequence -> expr
-Rule 28    list -> L_BRACK sequence R_BRACK
-Rule 29    list -> L_BRACK R_BRACK
-Rule 30    expr -> list L_BRACK expr R_BRACK
+Rule 26    expr -> expr L_BRACK expr R_BRACK
+Rule 27    list -> L_BRACK sequence R_BRACK
+Rule 28    list -> L_BRACK R_BRACK
+Rule 29    sequence -> expr COMMA sequence
+Rule 30    sequence -> expr
 Rule 31    expr -> L_PAREN expr R_PAREN
 Rule 32    tuple -> L_PAREN sequence R_PAREN
 Rule 33    tuple -> L_PAREN R_PAREN
@@ -50,7 +50,7 @@ AND_ALSO             : 15
 BOOL                 : 
 BOOLEAN              : 5
 COLON                : 
-COMMA                : 26
+COMMA                : 29
 CONS                 : 24
 DIV                  : 10
 EQ                   : 
@@ -63,7 +63,7 @@ IN                   : 23
 INTEGER              : 2 34
 LT                   : 21
 LTE                  : 17
-L_BRACK              : 28 29 30
+L_BRACK              : 26 27 28
 L_PAREN              : 31 32 33
 MINUS                : 13 14
 MOD                  : 11
@@ -73,7 +73,7 @@ NOT                  : 25
 OR_ELSE              : 16
 PLUS                 : 12
 POW                  : 8
-R_BRACK              : 28 29 30
+R_BRACK              : 26 27 28
 R_PAREN              : 31 32 33
 SEMICOLON            : 1
 STRING               : 4
@@ -81,10 +81,10 @@ error                :
 
 Nonterminals, with rules where they appear
 
-expr                 : 1 8 8 9 9 10 10 11 11 12 12 13 13 14 15 15 16 16 17 17 18 18 19 19 20 20 21 21 22 22 23 23 24 24 25 26 27 30 31
+expr                 : 1 8 8 9 9 10 10 11 11 12 12 13 13 14 15 15 16 16 17 17 18 18 19 19 20 20 21 21 22 22 23 23 24 24 25 26 26 29 30 31
 line                 : 0
-list                 : 6 30
-sequence             : 26 28 32
+list                 : 6
+sequence             : 27 29 32
 tuple                : 7 34
 
 Parsing method: LALR
@@ -117,11 +117,11 @@ state 0
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -165,6 +165,7 @@ state 2
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
     SEMICOLON       shift and go to state 14
     POW             shift and go to state 15
@@ -183,6 +184,7 @@ state 2
     GT              shift and go to state 28
     IN              shift and go to state 29
     CONS            shift and go to state 30
+    L_BRACK         shift and go to state 31
 
 
 state 3
@@ -206,6 +208,7 @@ state 3
     GT              reduce using rule 2 (expr -> INTEGER .)
     IN              reduce using rule 2 (expr -> INTEGER .)
     CONS            reduce using rule 2 (expr -> INTEGER .)
+    L_BRACK         reduce using rule 2 (expr -> INTEGER .)
     COMMA           reduce using rule 2 (expr -> INTEGER .)
     R_BRACK         reduce using rule 2 (expr -> INTEGER .)
     R_PAREN         reduce using rule 2 (expr -> INTEGER .)
@@ -232,6 +235,7 @@ state 4
     GT              reduce using rule 3 (expr -> FLOAT .)
     IN              reduce using rule 3 (expr -> FLOAT .)
     CONS            reduce using rule 3 (expr -> FLOAT .)
+    L_BRACK         reduce using rule 3 (expr -> FLOAT .)
     COMMA           reduce using rule 3 (expr -> FLOAT .)
     R_BRACK         reduce using rule 3 (expr -> FLOAT .)
     R_PAREN         reduce using rule 3 (expr -> FLOAT .)
@@ -258,6 +262,7 @@ state 5
     GT              reduce using rule 4 (expr -> STRING .)
     IN              reduce using rule 4 (expr -> STRING .)
     CONS            reduce using rule 4 (expr -> STRING .)
+    L_BRACK         reduce using rule 4 (expr -> STRING .)
     COMMA           reduce using rule 4 (expr -> STRING .)
     R_BRACK         reduce using rule 4 (expr -> STRING .)
     R_PAREN         reduce using rule 4 (expr -> STRING .)
@@ -284,6 +289,7 @@ state 6
     GT              reduce using rule 5 (expr -> BOOLEAN .)
     IN              reduce using rule 5 (expr -> BOOLEAN .)
     CONS            reduce using rule 5 (expr -> BOOLEAN .)
+    L_BRACK         reduce using rule 5 (expr -> BOOLEAN .)
     COMMA           reduce using rule 5 (expr -> BOOLEAN .)
     R_BRACK         reduce using rule 5 (expr -> BOOLEAN .)
     R_PAREN         reduce using rule 5 (expr -> BOOLEAN .)
@@ -292,7 +298,6 @@ state 6
 state 7
 
     (6) expr -> list .
-    (30) expr -> list . L_BRACK expr R_BRACK
 
     SEMICOLON       reduce using rule 6 (expr -> list .)
     POW             reduce using rule 6 (expr -> list .)
@@ -311,10 +316,10 @@ state 7
     GT              reduce using rule 6 (expr -> list .)
     IN              reduce using rule 6 (expr -> list .)
     CONS            reduce using rule 6 (expr -> list .)
+    L_BRACK         reduce using rule 6 (expr -> list .)
     COMMA           reduce using rule 6 (expr -> list .)
     R_BRACK         reduce using rule 6 (expr -> list .)
     R_PAREN         reduce using rule 6 (expr -> list .)
-    L_BRACK         shift and go to state 31
 
 
 state 8
@@ -338,6 +343,7 @@ state 8
     GT              reduce using rule 7 (expr -> tuple .)
     IN              reduce using rule 7 (expr -> tuple .)
     CONS            reduce using rule 7 (expr -> tuple .)
+    L_BRACK         reduce using rule 7 (expr -> tuple .)
     COMMA           reduce using rule 7 (expr -> tuple .)
     R_BRACK         reduce using rule 7 (expr -> tuple .)
     R_PAREN         reduce using rule 7 (expr -> tuple .)
@@ -370,11 +376,11 @@ state 9
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -419,11 +425,11 @@ state 10
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -443,10 +449,10 @@ state 10
 
 state 11
 
-    (28) list -> L_BRACK . sequence R_BRACK
-    (29) list -> L_BRACK . R_BRACK
-    (26) sequence -> . expr COMMA sequence
-    (27) sequence -> . expr
+    (27) list -> L_BRACK . sequence R_BRACK
+    (28) list -> L_BRACK . R_BRACK
+    (29) sequence -> . expr COMMA sequence
+    (30) sequence -> . expr
     (2) expr -> . INTEGER
     (3) expr -> . FLOAT
     (4) expr -> . STRING
@@ -471,11 +477,11 @@ state 11
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -524,13 +530,13 @@ state 12
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (26) sequence -> . expr COMMA sequence
-    (27) sequence -> . expr
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (29) sequence -> . expr COMMA sequence
+    (30) sequence -> . expr
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -591,11 +597,11 @@ state 15
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -640,11 +646,11 @@ state 16
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -689,11 +695,11 @@ state 17
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -738,11 +744,11 @@ state 18
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -787,11 +793,11 @@ state 19
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -836,11 +842,11 @@ state 20
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -885,11 +891,11 @@ state 21
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -934,11 +940,11 @@ state 22
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -983,11 +989,11 @@ state 23
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -1032,11 +1038,11 @@ state 24
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -1081,11 +1087,11 @@ state 25
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -1130,11 +1136,11 @@ state 26
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -1179,11 +1185,11 @@ state 27
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -1228,11 +1234,11 @@ state 28
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -1277,11 +1283,11 @@ state 29
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -1326,11 +1332,11 @@ state 30
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -1350,7 +1356,7 @@ state 30
 
 state 31
 
-    (30) expr -> list L_BRACK . expr R_BRACK
+    (26) expr -> expr L_BRACK . expr R_BRACK
     (2) expr -> . INTEGER
     (3) expr -> . FLOAT
     (4) expr -> . STRING
@@ -1375,11 +1381,11 @@ state 31
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -1393,8 +1399,8 @@ state 31
     HASHTAG         shift and go to state 13
     L_BRACK         shift and go to state 11
 
-    list                           shift and go to state 7
     expr                           shift and go to state 57
+    list                           shift and go to state 7
     tuple                          shift and go to state 8
 
 state 32
@@ -1416,6 +1422,7 @@ state 32
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
     SEMICOLON       reduce using rule 14 (expr -> MINUS expr .)
     POW             reduce using rule 14 (expr -> MINUS expr .)
@@ -1434,6 +1441,7 @@ state 32
     GT              reduce using rule 14 (expr -> MINUS expr .)
     IN              reduce using rule 14 (expr -> MINUS expr .)
     CONS            reduce using rule 14 (expr -> MINUS expr .)
+    L_BRACK         reduce using rule 14 (expr -> MINUS expr .)
     COMMA           reduce using rule 14 (expr -> MINUS expr .)
     R_BRACK         reduce using rule 14 (expr -> MINUS expr .)
     R_PAREN         reduce using rule 14 (expr -> MINUS expr .)
@@ -1454,6 +1462,7 @@ state 32
   ! GT              [ shift and go to state 28 ]
   ! IN              [ shift and go to state 29 ]
   ! CONS            [ shift and go to state 30 ]
+  ! L_BRACK         [ shift and go to state 31 ]
 
 
 state 33
@@ -1475,6 +1484,7 @@ state 33
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
   ! shift/reduce conflict for POW resolved as shift
   ! shift/reduce conflict for MULT resolved as shift
@@ -1492,6 +1502,7 @@ state 33
   ! shift/reduce conflict for GT resolved as shift
   ! shift/reduce conflict for IN resolved as shift
   ! shift/reduce conflict for CONS resolved as shift
+  ! shift/reduce conflict for L_BRACK resolved as shift
     SEMICOLON       reduce using rule 25 (expr -> NOT expr .)
     COMMA           reduce using rule 25 (expr -> NOT expr .)
     R_BRACK         reduce using rule 25 (expr -> NOT expr .)
@@ -1512,6 +1523,7 @@ state 33
     GT              shift and go to state 28
     IN              shift and go to state 29
     CONS            shift and go to state 30
+    L_BRACK         shift and go to state 31
 
   ! POW             [ reduce using rule 25 (expr -> NOT expr .) ]
   ! MULT            [ reduce using rule 25 (expr -> NOT expr .) ]
@@ -1529,46 +1541,47 @@ state 33
   ! GT              [ reduce using rule 25 (expr -> NOT expr .) ]
   ! IN              [ reduce using rule 25 (expr -> NOT expr .) ]
   ! CONS            [ reduce using rule 25 (expr -> NOT expr .) ]
+  ! L_BRACK         [ reduce using rule 25 (expr -> NOT expr .) ]
 
 
 state 34
 
-    (28) list -> L_BRACK sequence . R_BRACK
+    (27) list -> L_BRACK sequence . R_BRACK
 
     R_BRACK         shift and go to state 58
 
 
 state 35
 
-    (29) list -> L_BRACK R_BRACK .
+    (28) list -> L_BRACK R_BRACK .
 
-    L_BRACK         reduce using rule 29 (list -> L_BRACK R_BRACK .)
-    SEMICOLON       reduce using rule 29 (list -> L_BRACK R_BRACK .)
-    POW             reduce using rule 29 (list -> L_BRACK R_BRACK .)
-    MULT            reduce using rule 29 (list -> L_BRACK R_BRACK .)
-    DIV             reduce using rule 29 (list -> L_BRACK R_BRACK .)
-    MOD             reduce using rule 29 (list -> L_BRACK R_BRACK .)
-    PLUS            reduce using rule 29 (list -> L_BRACK R_BRACK .)
-    MINUS           reduce using rule 29 (list -> L_BRACK R_BRACK .)
-    AND_ALSO        reduce using rule 29 (list -> L_BRACK R_BRACK .)
-    OR_ELSE         reduce using rule 29 (list -> L_BRACK R_BRACK .)
-    LTE             reduce using rule 29 (list -> L_BRACK R_BRACK .)
-    GTE             reduce using rule 29 (list -> L_BRACK R_BRACK .)
-    EQ_EQ           reduce using rule 29 (list -> L_BRACK R_BRACK .)
-    NEQ             reduce using rule 29 (list -> L_BRACK R_BRACK .)
-    LT              reduce using rule 29 (list -> L_BRACK R_BRACK .)
-    GT              reduce using rule 29 (list -> L_BRACK R_BRACK .)
-    IN              reduce using rule 29 (list -> L_BRACK R_BRACK .)
-    CONS            reduce using rule 29 (list -> L_BRACK R_BRACK .)
-    COMMA           reduce using rule 29 (list -> L_BRACK R_BRACK .)
-    R_BRACK         reduce using rule 29 (list -> L_BRACK R_BRACK .)
-    R_PAREN         reduce using rule 29 (list -> L_BRACK R_BRACK .)
+    SEMICOLON       reduce using rule 28 (list -> L_BRACK R_BRACK .)
+    POW             reduce using rule 28 (list -> L_BRACK R_BRACK .)
+    MULT            reduce using rule 28 (list -> L_BRACK R_BRACK .)
+    DIV             reduce using rule 28 (list -> L_BRACK R_BRACK .)
+    MOD             reduce using rule 28 (list -> L_BRACK R_BRACK .)
+    PLUS            reduce using rule 28 (list -> L_BRACK R_BRACK .)
+    MINUS           reduce using rule 28 (list -> L_BRACK R_BRACK .)
+    AND_ALSO        reduce using rule 28 (list -> L_BRACK R_BRACK .)
+    OR_ELSE         reduce using rule 28 (list -> L_BRACK R_BRACK .)
+    LTE             reduce using rule 28 (list -> L_BRACK R_BRACK .)
+    GTE             reduce using rule 28 (list -> L_BRACK R_BRACK .)
+    EQ_EQ           reduce using rule 28 (list -> L_BRACK R_BRACK .)
+    NEQ             reduce using rule 28 (list -> L_BRACK R_BRACK .)
+    LT              reduce using rule 28 (list -> L_BRACK R_BRACK .)
+    GT              reduce using rule 28 (list -> L_BRACK R_BRACK .)
+    IN              reduce using rule 28 (list -> L_BRACK R_BRACK .)
+    CONS            reduce using rule 28 (list -> L_BRACK R_BRACK .)
+    L_BRACK         reduce using rule 28 (list -> L_BRACK R_BRACK .)
+    COMMA           reduce using rule 28 (list -> L_BRACK R_BRACK .)
+    R_BRACK         reduce using rule 28 (list -> L_BRACK R_BRACK .)
+    R_PAREN         reduce using rule 28 (list -> L_BRACK R_BRACK .)
 
 
 state 36
 
-    (26) sequence -> expr . COMMA sequence
-    (27) sequence -> expr .
+    (29) sequence -> expr . COMMA sequence
+    (30) sequence -> expr .
     (8) expr -> expr . POW expr
     (9) expr -> expr . MULT expr
     (10) expr -> expr . DIV expr
@@ -1585,10 +1598,11 @@ state 36
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
     COMMA           shift and go to state 59
-    R_BRACK         reduce using rule 27 (sequence -> expr .)
-    R_PAREN         reduce using rule 27 (sequence -> expr .)
+    R_BRACK         reduce using rule 30 (sequence -> expr .)
+    R_PAREN         reduce using rule 30 (sequence -> expr .)
     POW             shift and go to state 15
     MULT            shift and go to state 16
     DIV             shift and go to state 17
@@ -1605,6 +1619,7 @@ state 36
     GT              shift and go to state 28
     IN              shift and go to state 29
     CONS            shift and go to state 30
+    L_BRACK         shift and go to state 31
 
 
 state 37
@@ -1626,8 +1641,9 @@ state 37
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
-    (26) sequence -> expr . COMMA sequence
-    (27) sequence -> expr .
+    (26) expr -> expr . L_BRACK expr R_BRACK
+    (29) sequence -> expr . COMMA sequence
+    (30) sequence -> expr .
 
   ! shift/reduce conflict for R_PAREN resolved as shift
     R_PAREN         shift and go to state 60
@@ -1647,9 +1663,10 @@ state 37
     GT              shift and go to state 28
     IN              shift and go to state 29
     CONS            shift and go to state 30
+    L_BRACK         shift and go to state 31
     COMMA           shift and go to state 59
 
-  ! R_PAREN         [ reduce using rule 27 (sequence -> expr .) ]
+  ! R_PAREN         [ reduce using rule 30 (sequence -> expr .) ]
 
 
 state 38
@@ -1673,6 +1690,7 @@ state 38
     GT              reduce using rule 33 (tuple -> L_PAREN R_PAREN .)
     IN              reduce using rule 33 (tuple -> L_PAREN R_PAREN .)
     CONS            reduce using rule 33 (tuple -> L_PAREN R_PAREN .)
+    L_BRACK         reduce using rule 33 (tuple -> L_PAREN R_PAREN .)
     COMMA           reduce using rule 33 (tuple -> L_PAREN R_PAREN .)
     R_BRACK         reduce using rule 33 (tuple -> L_PAREN R_PAREN .)
     R_PAREN         reduce using rule 33 (tuple -> L_PAREN R_PAREN .)
@@ -1714,6 +1732,7 @@ state 41
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
   ! shift/reduce conflict for POW resolved as shift
   ! shift/reduce conflict for MULT resolved as shift
@@ -1731,6 +1750,7 @@ state 41
   ! shift/reduce conflict for GT resolved as shift
   ! shift/reduce conflict for IN resolved as shift
   ! shift/reduce conflict for CONS resolved as shift
+  ! shift/reduce conflict for L_BRACK resolved as shift
     SEMICOLON       reduce using rule 8 (expr -> expr POW expr .)
     COMMA           reduce using rule 8 (expr -> expr POW expr .)
     R_BRACK         reduce using rule 8 (expr -> expr POW expr .)
@@ -1751,6 +1771,7 @@ state 41
     GT              shift and go to state 28
     IN              shift and go to state 29
     CONS            shift and go to state 30
+    L_BRACK         shift and go to state 31
 
   ! POW             [ reduce using rule 8 (expr -> expr POW expr .) ]
   ! MULT            [ reduce using rule 8 (expr -> expr POW expr .) ]
@@ -1768,6 +1789,7 @@ state 41
   ! GT              [ reduce using rule 8 (expr -> expr POW expr .) ]
   ! IN              [ reduce using rule 8 (expr -> expr POW expr .) ]
   ! CONS            [ reduce using rule 8 (expr -> expr POW expr .) ]
+  ! L_BRACK         [ reduce using rule 8 (expr -> expr POW expr .) ]
 
 
 state 42
@@ -1789,6 +1811,7 @@ state 42
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
   ! shift/reduce conflict for POW resolved as shift
   ! shift/reduce conflict for MULT resolved as shift
@@ -1806,6 +1829,7 @@ state 42
   ! shift/reduce conflict for GT resolved as shift
   ! shift/reduce conflict for IN resolved as shift
   ! shift/reduce conflict for CONS resolved as shift
+  ! shift/reduce conflict for L_BRACK resolved as shift
     SEMICOLON       reduce using rule 9 (expr -> expr MULT expr .)
     COMMA           reduce using rule 9 (expr -> expr MULT expr .)
     R_BRACK         reduce using rule 9 (expr -> expr MULT expr .)
@@ -1826,6 +1850,7 @@ state 42
     GT              shift and go to state 28
     IN              shift and go to state 29
     CONS            shift and go to state 30
+    L_BRACK         shift and go to state 31
 
   ! POW             [ reduce using rule 9 (expr -> expr MULT expr .) ]
   ! MULT            [ reduce using rule 9 (expr -> expr MULT expr .) ]
@@ -1843,6 +1868,7 @@ state 42
   ! GT              [ reduce using rule 9 (expr -> expr MULT expr .) ]
   ! IN              [ reduce using rule 9 (expr -> expr MULT expr .) ]
   ! CONS            [ reduce using rule 9 (expr -> expr MULT expr .) ]
+  ! L_BRACK         [ reduce using rule 9 (expr -> expr MULT expr .) ]
 
 
 state 43
@@ -1864,6 +1890,7 @@ state 43
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
   ! shift/reduce conflict for POW resolved as shift
   ! shift/reduce conflict for MULT resolved as shift
@@ -1881,6 +1908,7 @@ state 43
   ! shift/reduce conflict for GT resolved as shift
   ! shift/reduce conflict for IN resolved as shift
   ! shift/reduce conflict for CONS resolved as shift
+  ! shift/reduce conflict for L_BRACK resolved as shift
     SEMICOLON       reduce using rule 10 (expr -> expr DIV expr .)
     COMMA           reduce using rule 10 (expr -> expr DIV expr .)
     R_BRACK         reduce using rule 10 (expr -> expr DIV expr .)
@@ -1901,6 +1929,7 @@ state 43
     GT              shift and go to state 28
     IN              shift and go to state 29
     CONS            shift and go to state 30
+    L_BRACK         shift and go to state 31
 
   ! POW             [ reduce using rule 10 (expr -> expr DIV expr .) ]
   ! MULT            [ reduce using rule 10 (expr -> expr DIV expr .) ]
@@ -1918,6 +1947,7 @@ state 43
   ! GT              [ reduce using rule 10 (expr -> expr DIV expr .) ]
   ! IN              [ reduce using rule 10 (expr -> expr DIV expr .) ]
   ! CONS            [ reduce using rule 10 (expr -> expr DIV expr .) ]
+  ! L_BRACK         [ reduce using rule 10 (expr -> expr DIV expr .) ]
 
 
 state 44
@@ -1939,6 +1969,7 @@ state 44
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
   ! shift/reduce conflict for POW resolved as shift
   ! shift/reduce conflict for MULT resolved as shift
@@ -1956,6 +1987,7 @@ state 44
   ! shift/reduce conflict for GT resolved as shift
   ! shift/reduce conflict for IN resolved as shift
   ! shift/reduce conflict for CONS resolved as shift
+  ! shift/reduce conflict for L_BRACK resolved as shift
     SEMICOLON       reduce using rule 11 (expr -> expr MOD expr .)
     COMMA           reduce using rule 11 (expr -> expr MOD expr .)
     R_BRACK         reduce using rule 11 (expr -> expr MOD expr .)
@@ -1976,6 +2008,7 @@ state 44
     GT              shift and go to state 28
     IN              shift and go to state 29
     CONS            shift and go to state 30
+    L_BRACK         shift and go to state 31
 
   ! POW             [ reduce using rule 11 (expr -> expr MOD expr .) ]
   ! MULT            [ reduce using rule 11 (expr -> expr MOD expr .) ]
@@ -1993,6 +2026,7 @@ state 44
   ! GT              [ reduce using rule 11 (expr -> expr MOD expr .) ]
   ! IN              [ reduce using rule 11 (expr -> expr MOD expr .) ]
   ! CONS            [ reduce using rule 11 (expr -> expr MOD expr .) ]
+  ! L_BRACK         [ reduce using rule 11 (expr -> expr MOD expr .) ]
 
 
 state 45
@@ -2014,6 +2048,7 @@ state 45
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
     SEMICOLON       reduce using rule 12 (expr -> expr PLUS expr .)
     POW             reduce using rule 12 (expr -> expr PLUS expr .)
@@ -2035,7 +2070,9 @@ state 45
     COMMA           reduce using rule 12 (expr -> expr PLUS expr .)
     R_BRACK         reduce using rule 12 (expr -> expr PLUS expr .)
     R_PAREN         reduce using rule 12 (expr -> expr PLUS expr .)
+    L_BRACK         shift and go to state 31
 
+  ! L_BRACK         [ reduce using rule 12 (expr -> expr PLUS expr .) ]
   ! POW             [ shift and go to state 15 ]
   ! MULT            [ shift and go to state 16 ]
   ! DIV             [ shift and go to state 17 ]
@@ -2073,6 +2110,7 @@ state 46
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
     SEMICOLON       reduce using rule 13 (expr -> expr MINUS expr .)
     POW             reduce using rule 13 (expr -> expr MINUS expr .)
@@ -2094,7 +2132,9 @@ state 46
     COMMA           reduce using rule 13 (expr -> expr MINUS expr .)
     R_BRACK         reduce using rule 13 (expr -> expr MINUS expr .)
     R_PAREN         reduce using rule 13 (expr -> expr MINUS expr .)
+    L_BRACK         shift and go to state 31
 
+  ! L_BRACK         [ reduce using rule 13 (expr -> expr MINUS expr .) ]
   ! POW             [ shift and go to state 15 ]
   ! MULT            [ shift and go to state 16 ]
   ! DIV             [ shift and go to state 17 ]
@@ -2132,6 +2172,7 @@ state 47
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
   ! shift/reduce conflict for POW resolved as shift
   ! shift/reduce conflict for MULT resolved as shift
@@ -2149,6 +2190,7 @@ state 47
   ! shift/reduce conflict for GT resolved as shift
   ! shift/reduce conflict for IN resolved as shift
   ! shift/reduce conflict for CONS resolved as shift
+  ! shift/reduce conflict for L_BRACK resolved as shift
     SEMICOLON       reduce using rule 15 (expr -> expr AND_ALSO expr .)
     COMMA           reduce using rule 15 (expr -> expr AND_ALSO expr .)
     R_BRACK         reduce using rule 15 (expr -> expr AND_ALSO expr .)
@@ -2169,6 +2211,7 @@ state 47
     GT              shift and go to state 28
     IN              shift and go to state 29
     CONS            shift and go to state 30
+    L_BRACK         shift and go to state 31
 
   ! POW             [ reduce using rule 15 (expr -> expr AND_ALSO expr .) ]
   ! MULT            [ reduce using rule 15 (expr -> expr AND_ALSO expr .) ]
@@ -2186,6 +2229,7 @@ state 47
   ! GT              [ reduce using rule 15 (expr -> expr AND_ALSO expr .) ]
   ! IN              [ reduce using rule 15 (expr -> expr AND_ALSO expr .) ]
   ! CONS            [ reduce using rule 15 (expr -> expr AND_ALSO expr .) ]
+  ! L_BRACK         [ reduce using rule 15 (expr -> expr AND_ALSO expr .) ]
 
 
 state 48
@@ -2207,6 +2251,7 @@ state 48
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
   ! shift/reduce conflict for POW resolved as shift
   ! shift/reduce conflict for MULT resolved as shift
@@ -2224,6 +2269,7 @@ state 48
   ! shift/reduce conflict for GT resolved as shift
   ! shift/reduce conflict for IN resolved as shift
   ! shift/reduce conflict for CONS resolved as shift
+  ! shift/reduce conflict for L_BRACK resolved as shift
     SEMICOLON       reduce using rule 16 (expr -> expr OR_ELSE expr .)
     COMMA           reduce using rule 16 (expr -> expr OR_ELSE expr .)
     R_BRACK         reduce using rule 16 (expr -> expr OR_ELSE expr .)
@@ -2244,6 +2290,7 @@ state 48
     GT              shift and go to state 28
     IN              shift and go to state 29
     CONS            shift and go to state 30
+    L_BRACK         shift and go to state 31
 
   ! POW             [ reduce using rule 16 (expr -> expr OR_ELSE expr .) ]
   ! MULT            [ reduce using rule 16 (expr -> expr OR_ELSE expr .) ]
@@ -2261,6 +2308,7 @@ state 48
   ! GT              [ reduce using rule 16 (expr -> expr OR_ELSE expr .) ]
   ! IN              [ reduce using rule 16 (expr -> expr OR_ELSE expr .) ]
   ! CONS            [ reduce using rule 16 (expr -> expr OR_ELSE expr .) ]
+  ! L_BRACK         [ reduce using rule 16 (expr -> expr OR_ELSE expr .) ]
 
 
 state 49
@@ -2282,6 +2330,7 @@ state 49
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
   ! shift/reduce conflict for POW resolved as shift
   ! shift/reduce conflict for MULT resolved as shift
@@ -2299,6 +2348,7 @@ state 49
   ! shift/reduce conflict for GT resolved as shift
   ! shift/reduce conflict for IN resolved as shift
   ! shift/reduce conflict for CONS resolved as shift
+  ! shift/reduce conflict for L_BRACK resolved as shift
     SEMICOLON       reduce using rule 17 (expr -> expr LTE expr .)
     COMMA           reduce using rule 17 (expr -> expr LTE expr .)
     R_BRACK         reduce using rule 17 (expr -> expr LTE expr .)
@@ -2319,6 +2369,7 @@ state 49
     GT              shift and go to state 28
     IN              shift and go to state 29
     CONS            shift and go to state 30
+    L_BRACK         shift and go to state 31
 
   ! POW             [ reduce using rule 17 (expr -> expr LTE expr .) ]
   ! MULT            [ reduce using rule 17 (expr -> expr LTE expr .) ]
@@ -2336,6 +2387,7 @@ state 49
   ! GT              [ reduce using rule 17 (expr -> expr LTE expr .) ]
   ! IN              [ reduce using rule 17 (expr -> expr LTE expr .) ]
   ! CONS            [ reduce using rule 17 (expr -> expr LTE expr .) ]
+  ! L_BRACK         [ reduce using rule 17 (expr -> expr LTE expr .) ]
 
 
 state 50
@@ -2357,6 +2409,7 @@ state 50
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
   ! shift/reduce conflict for POW resolved as shift
   ! shift/reduce conflict for MULT resolved as shift
@@ -2374,6 +2427,7 @@ state 50
   ! shift/reduce conflict for GT resolved as shift
   ! shift/reduce conflict for IN resolved as shift
   ! shift/reduce conflict for CONS resolved as shift
+  ! shift/reduce conflict for L_BRACK resolved as shift
     SEMICOLON       reduce using rule 18 (expr -> expr GTE expr .)
     COMMA           reduce using rule 18 (expr -> expr GTE expr .)
     R_BRACK         reduce using rule 18 (expr -> expr GTE expr .)
@@ -2394,6 +2448,7 @@ state 50
     GT              shift and go to state 28
     IN              shift and go to state 29
     CONS            shift and go to state 30
+    L_BRACK         shift and go to state 31
 
   ! POW             [ reduce using rule 18 (expr -> expr GTE expr .) ]
   ! MULT            [ reduce using rule 18 (expr -> expr GTE expr .) ]
@@ -2411,6 +2466,7 @@ state 50
   ! GT              [ reduce using rule 18 (expr -> expr GTE expr .) ]
   ! IN              [ reduce using rule 18 (expr -> expr GTE expr .) ]
   ! CONS            [ reduce using rule 18 (expr -> expr GTE expr .) ]
+  ! L_BRACK         [ reduce using rule 18 (expr -> expr GTE expr .) ]
 
 
 state 51
@@ -2432,6 +2488,7 @@ state 51
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
   ! shift/reduce conflict for POW resolved as shift
   ! shift/reduce conflict for MULT resolved as shift
@@ -2449,6 +2506,7 @@ state 51
   ! shift/reduce conflict for GT resolved as shift
   ! shift/reduce conflict for IN resolved as shift
   ! shift/reduce conflict for CONS resolved as shift
+  ! shift/reduce conflict for L_BRACK resolved as shift
     SEMICOLON       reduce using rule 19 (expr -> expr EQ_EQ expr .)
     COMMA           reduce using rule 19 (expr -> expr EQ_EQ expr .)
     R_BRACK         reduce using rule 19 (expr -> expr EQ_EQ expr .)
@@ -2469,6 +2527,7 @@ state 51
     GT              shift and go to state 28
     IN              shift and go to state 29
     CONS            shift and go to state 30
+    L_BRACK         shift and go to state 31
 
   ! POW             [ reduce using rule 19 (expr -> expr EQ_EQ expr .) ]
   ! MULT            [ reduce using rule 19 (expr -> expr EQ_EQ expr .) ]
@@ -2486,6 +2545,7 @@ state 51
   ! GT              [ reduce using rule 19 (expr -> expr EQ_EQ expr .) ]
   ! IN              [ reduce using rule 19 (expr -> expr EQ_EQ expr .) ]
   ! CONS            [ reduce using rule 19 (expr -> expr EQ_EQ expr .) ]
+  ! L_BRACK         [ reduce using rule 19 (expr -> expr EQ_EQ expr .) ]
 
 
 state 52
@@ -2507,6 +2567,7 @@ state 52
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
   ! shift/reduce conflict for POW resolved as shift
   ! shift/reduce conflict for MULT resolved as shift
@@ -2524,6 +2585,7 @@ state 52
   ! shift/reduce conflict for GT resolved as shift
   ! shift/reduce conflict for IN resolved as shift
   ! shift/reduce conflict for CONS resolved as shift
+  ! shift/reduce conflict for L_BRACK resolved as shift
     SEMICOLON       reduce using rule 20 (expr -> expr NEQ expr .)
     COMMA           reduce using rule 20 (expr -> expr NEQ expr .)
     R_BRACK         reduce using rule 20 (expr -> expr NEQ expr .)
@@ -2544,6 +2606,7 @@ state 52
     GT              shift and go to state 28
     IN              shift and go to state 29
     CONS            shift and go to state 30
+    L_BRACK         shift and go to state 31
 
   ! POW             [ reduce using rule 20 (expr -> expr NEQ expr .) ]
   ! MULT            [ reduce using rule 20 (expr -> expr NEQ expr .) ]
@@ -2561,6 +2624,7 @@ state 52
   ! GT              [ reduce using rule 20 (expr -> expr NEQ expr .) ]
   ! IN              [ reduce using rule 20 (expr -> expr NEQ expr .) ]
   ! CONS            [ reduce using rule 20 (expr -> expr NEQ expr .) ]
+  ! L_BRACK         [ reduce using rule 20 (expr -> expr NEQ expr .) ]
 
 
 state 53
@@ -2582,6 +2646,7 @@ state 53
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
   ! shift/reduce conflict for POW resolved as shift
   ! shift/reduce conflict for MULT resolved as shift
@@ -2599,6 +2664,7 @@ state 53
   ! shift/reduce conflict for GT resolved as shift
   ! shift/reduce conflict for IN resolved as shift
   ! shift/reduce conflict for CONS resolved as shift
+  ! shift/reduce conflict for L_BRACK resolved as shift
     SEMICOLON       reduce using rule 21 (expr -> expr LT expr .)
     COMMA           reduce using rule 21 (expr -> expr LT expr .)
     R_BRACK         reduce using rule 21 (expr -> expr LT expr .)
@@ -2619,6 +2685,7 @@ state 53
     GT              shift and go to state 28
     IN              shift and go to state 29
     CONS            shift and go to state 30
+    L_BRACK         shift and go to state 31
 
   ! POW             [ reduce using rule 21 (expr -> expr LT expr .) ]
   ! MULT            [ reduce using rule 21 (expr -> expr LT expr .) ]
@@ -2636,6 +2703,7 @@ state 53
   ! GT              [ reduce using rule 21 (expr -> expr LT expr .) ]
   ! IN              [ reduce using rule 21 (expr -> expr LT expr .) ]
   ! CONS            [ reduce using rule 21 (expr -> expr LT expr .) ]
+  ! L_BRACK         [ reduce using rule 21 (expr -> expr LT expr .) ]
 
 
 state 54
@@ -2657,6 +2725,7 @@ state 54
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
   ! shift/reduce conflict for POW resolved as shift
   ! shift/reduce conflict for MULT resolved as shift
@@ -2674,6 +2743,7 @@ state 54
   ! shift/reduce conflict for GT resolved as shift
   ! shift/reduce conflict for IN resolved as shift
   ! shift/reduce conflict for CONS resolved as shift
+  ! shift/reduce conflict for L_BRACK resolved as shift
     SEMICOLON       reduce using rule 22 (expr -> expr GT expr .)
     COMMA           reduce using rule 22 (expr -> expr GT expr .)
     R_BRACK         reduce using rule 22 (expr -> expr GT expr .)
@@ -2694,6 +2764,7 @@ state 54
     GT              shift and go to state 28
     IN              shift and go to state 29
     CONS            shift and go to state 30
+    L_BRACK         shift and go to state 31
 
   ! POW             [ reduce using rule 22 (expr -> expr GT expr .) ]
   ! MULT            [ reduce using rule 22 (expr -> expr GT expr .) ]
@@ -2711,6 +2782,7 @@ state 54
   ! GT              [ reduce using rule 22 (expr -> expr GT expr .) ]
   ! IN              [ reduce using rule 22 (expr -> expr GT expr .) ]
   ! CONS            [ reduce using rule 22 (expr -> expr GT expr .) ]
+  ! L_BRACK         [ reduce using rule 22 (expr -> expr GT expr .) ]
 
 
 state 55
@@ -2732,6 +2804,7 @@ state 55
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
   ! shift/reduce conflict for POW resolved as shift
   ! shift/reduce conflict for MULT resolved as shift
@@ -2749,6 +2822,7 @@ state 55
   ! shift/reduce conflict for GT resolved as shift
   ! shift/reduce conflict for IN resolved as shift
   ! shift/reduce conflict for CONS resolved as shift
+  ! shift/reduce conflict for L_BRACK resolved as shift
     SEMICOLON       reduce using rule 23 (expr -> expr IN expr .)
     COMMA           reduce using rule 23 (expr -> expr IN expr .)
     R_BRACK         reduce using rule 23 (expr -> expr IN expr .)
@@ -2769,6 +2843,7 @@ state 55
     GT              shift and go to state 28
     IN              shift and go to state 29
     CONS            shift and go to state 30
+    L_BRACK         shift and go to state 31
 
   ! POW             [ reduce using rule 23 (expr -> expr IN expr .) ]
   ! MULT            [ reduce using rule 23 (expr -> expr IN expr .) ]
@@ -2786,6 +2861,7 @@ state 55
   ! GT              [ reduce using rule 23 (expr -> expr IN expr .) ]
   ! IN              [ reduce using rule 23 (expr -> expr IN expr .) ]
   ! CONS            [ reduce using rule 23 (expr -> expr IN expr .) ]
+  ! L_BRACK         [ reduce using rule 23 (expr -> expr IN expr .) ]
 
 
 state 56
@@ -2807,6 +2883,7 @@ state 56
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
   ! shift/reduce conflict for POW resolved as shift
   ! shift/reduce conflict for MULT resolved as shift
@@ -2824,6 +2901,7 @@ state 56
   ! shift/reduce conflict for GT resolved as shift
   ! shift/reduce conflict for IN resolved as shift
   ! shift/reduce conflict for CONS resolved as shift
+  ! shift/reduce conflict for L_BRACK resolved as shift
     SEMICOLON       reduce using rule 24 (expr -> expr CONS expr .)
     COMMA           reduce using rule 24 (expr -> expr CONS expr .)
     R_BRACK         reduce using rule 24 (expr -> expr CONS expr .)
@@ -2844,6 +2922,7 @@ state 56
     GT              shift and go to state 28
     IN              shift and go to state 29
     CONS            shift and go to state 30
+    L_BRACK         shift and go to state 31
 
   ! POW             [ reduce using rule 24 (expr -> expr CONS expr .) ]
   ! MULT            [ reduce using rule 24 (expr -> expr CONS expr .) ]
@@ -2861,11 +2940,12 @@ state 56
   ! GT              [ reduce using rule 24 (expr -> expr CONS expr .) ]
   ! IN              [ reduce using rule 24 (expr -> expr CONS expr .) ]
   ! CONS            [ reduce using rule 24 (expr -> expr CONS expr .) ]
+  ! L_BRACK         [ reduce using rule 24 (expr -> expr CONS expr .) ]
 
 
 state 57
 
-    (30) expr -> list L_BRACK expr . R_BRACK
+    (26) expr -> expr L_BRACK expr . R_BRACK
     (8) expr -> expr . POW expr
     (9) expr -> expr . MULT expr
     (10) expr -> expr . DIV expr
@@ -2882,6 +2962,7 @@ state 57
     (22) expr -> expr . GT expr
     (23) expr -> expr . IN expr
     (24) expr -> expr . CONS expr
+    (26) expr -> expr . L_BRACK expr R_BRACK
 
     R_BRACK         shift and go to state 64
     POW             shift and go to state 15
@@ -2900,40 +2981,41 @@ state 57
     GT              shift and go to state 28
     IN              shift and go to state 29
     CONS            shift and go to state 30
+    L_BRACK         shift and go to state 31
 
 
 state 58
 
-    (28) list -> L_BRACK sequence R_BRACK .
+    (27) list -> L_BRACK sequence R_BRACK .
 
-    L_BRACK         reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
-    SEMICOLON       reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
-    POW             reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
-    MULT            reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
-    DIV             reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
-    MOD             reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
-    PLUS            reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
-    MINUS           reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
-    AND_ALSO        reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
-    OR_ELSE         reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
-    LTE             reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
-    GTE             reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
-    EQ_EQ           reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
-    NEQ             reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
-    LT              reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
-    GT              reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
-    IN              reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
-    CONS            reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
-    COMMA           reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
-    R_BRACK         reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
-    R_PAREN         reduce using rule 28 (list -> L_BRACK sequence R_BRACK .)
+    SEMICOLON       reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
+    POW             reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
+    MULT            reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
+    DIV             reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
+    MOD             reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
+    PLUS            reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
+    MINUS           reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
+    AND_ALSO        reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
+    OR_ELSE         reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
+    LTE             reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
+    GTE             reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
+    EQ_EQ           reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
+    NEQ             reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
+    LT              reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
+    GT              reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
+    IN              reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
+    CONS            reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
+    L_BRACK         reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
+    COMMA           reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
+    R_BRACK         reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
+    R_PAREN         reduce using rule 27 (list -> L_BRACK sequence R_BRACK .)
 
 
 state 59
 
-    (26) sequence -> expr COMMA . sequence
-    (26) sequence -> . expr COMMA sequence
-    (27) sequence -> . expr
+    (29) sequence -> expr COMMA . sequence
+    (29) sequence -> . expr COMMA sequence
+    (30) sequence -> . expr
     (2) expr -> . INTEGER
     (3) expr -> . FLOAT
     (4) expr -> . STRING
@@ -2958,11 +3040,11 @@ state 59
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -3002,6 +3084,7 @@ state 60
     GT              reduce using rule 31 (expr -> L_PAREN expr R_PAREN .)
     IN              reduce using rule 31 (expr -> L_PAREN expr R_PAREN .)
     CONS            reduce using rule 31 (expr -> L_PAREN expr R_PAREN .)
+    L_BRACK         reduce using rule 31 (expr -> L_PAREN expr R_PAREN .)
     COMMA           reduce using rule 31 (expr -> L_PAREN expr R_PAREN .)
     R_BRACK         reduce using rule 31 (expr -> L_PAREN expr R_PAREN .)
     R_PAREN         reduce using rule 31 (expr -> L_PAREN expr R_PAREN .)
@@ -3028,6 +3111,7 @@ state 61
     GT              reduce using rule 32 (tuple -> L_PAREN sequence R_PAREN .)
     IN              reduce using rule 32 (tuple -> L_PAREN sequence R_PAREN .)
     CONS            reduce using rule 32 (tuple -> L_PAREN sequence R_PAREN .)
+    L_BRACK         reduce using rule 32 (tuple -> L_PAREN sequence R_PAREN .)
     COMMA           reduce using rule 32 (tuple -> L_PAREN sequence R_PAREN .)
     R_BRACK         reduce using rule 32 (tuple -> L_PAREN sequence R_PAREN .)
     R_PAREN         reduce using rule 32 (tuple -> L_PAREN sequence R_PAREN .)
@@ -3054,6 +3138,7 @@ state 62
     GT              reduce using rule 34 (expr -> HASHTAG INTEGER tuple .)
     IN              reduce using rule 34 (expr -> HASHTAG INTEGER tuple .)
     CONS            reduce using rule 34 (expr -> HASHTAG INTEGER tuple .)
+    L_BRACK         reduce using rule 34 (expr -> HASHTAG INTEGER tuple .)
     COMMA           reduce using rule 34 (expr -> HASHTAG INTEGER tuple .)
     R_BRACK         reduce using rule 34 (expr -> HASHTAG INTEGER tuple .)
     R_PAREN         reduce using rule 34 (expr -> HASHTAG INTEGER tuple .)
@@ -3063,8 +3148,8 @@ state 63
 
     (32) tuple -> L_PAREN . sequence R_PAREN
     (33) tuple -> L_PAREN . R_PAREN
-    (26) sequence -> . expr COMMA sequence
-    (27) sequence -> . expr
+    (29) sequence -> . expr COMMA sequence
+    (30) sequence -> . expr
     (2) expr -> . INTEGER
     (3) expr -> . FLOAT
     (4) expr -> . STRING
@@ -3089,11 +3174,11 @@ state 63
     (23) expr -> . expr IN expr
     (24) expr -> . expr CONS expr
     (25) expr -> . NOT expr
-    (30) expr -> . list L_BRACK expr R_BRACK
+    (26) expr -> . expr L_BRACK expr R_BRACK
     (31) expr -> . L_PAREN expr R_PAREN
     (34) expr -> . HASHTAG INTEGER tuple
-    (28) list -> . L_BRACK sequence R_BRACK
-    (29) list -> . L_BRACK R_BRACK
+    (27) list -> . L_BRACK sequence R_BRACK
+    (28) list -> . L_BRACK R_BRACK
     (32) tuple -> . L_PAREN sequence R_PAREN
     (33) tuple -> . L_PAREN R_PAREN
 
@@ -3115,36 +3200,37 @@ state 63
 
 state 64
 
-    (30) expr -> list L_BRACK expr R_BRACK .
+    (26) expr -> expr L_BRACK expr R_BRACK .
 
-    SEMICOLON       reduce using rule 30 (expr -> list L_BRACK expr R_BRACK .)
-    POW             reduce using rule 30 (expr -> list L_BRACK expr R_BRACK .)
-    MULT            reduce using rule 30 (expr -> list L_BRACK expr R_BRACK .)
-    DIV             reduce using rule 30 (expr -> list L_BRACK expr R_BRACK .)
-    MOD             reduce using rule 30 (expr -> list L_BRACK expr R_BRACK .)
-    PLUS            reduce using rule 30 (expr -> list L_BRACK expr R_BRACK .)
-    MINUS           reduce using rule 30 (expr -> list L_BRACK expr R_BRACK .)
-    AND_ALSO        reduce using rule 30 (expr -> list L_BRACK expr R_BRACK .)
-    OR_ELSE         reduce using rule 30 (expr -> list L_BRACK expr R_BRACK .)
-    LTE             reduce using rule 30 (expr -> list L_BRACK expr R_BRACK .)
-    GTE             reduce using rule 30 (expr -> list L_BRACK expr R_BRACK .)
-    EQ_EQ           reduce using rule 30 (expr -> list L_BRACK expr R_BRACK .)
-    NEQ             reduce using rule 30 (expr -> list L_BRACK expr R_BRACK .)
-    LT              reduce using rule 30 (expr -> list L_BRACK expr R_BRACK .)
-    GT              reduce using rule 30 (expr -> list L_BRACK expr R_BRACK .)
-    IN              reduce using rule 30 (expr -> list L_BRACK expr R_BRACK .)
-    CONS            reduce using rule 30 (expr -> list L_BRACK expr R_BRACK .)
-    COMMA           reduce using rule 30 (expr -> list L_BRACK expr R_BRACK .)
-    R_BRACK         reduce using rule 30 (expr -> list L_BRACK expr R_BRACK .)
-    R_PAREN         reduce using rule 30 (expr -> list L_BRACK expr R_BRACK .)
+    SEMICOLON       reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
+    POW             reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
+    MULT            reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
+    DIV             reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
+    MOD             reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
+    PLUS            reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
+    MINUS           reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
+    AND_ALSO        reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
+    OR_ELSE         reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
+    LTE             reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
+    GTE             reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
+    EQ_EQ           reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
+    NEQ             reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
+    LT              reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
+    GT              reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
+    IN              reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
+    CONS            reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
+    L_BRACK         reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
+    COMMA           reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
+    R_BRACK         reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
+    R_PAREN         reduce using rule 26 (expr -> expr L_BRACK expr R_BRACK .)
 
 
 state 65
 
-    (26) sequence -> expr COMMA sequence .
+    (29) sequence -> expr COMMA sequence .
 
-    R_BRACK         reduce using rule 26 (sequence -> expr COMMA sequence .)
-    R_PAREN         reduce using rule 26 (sequence -> expr COMMA sequence .)
+    R_BRACK         reduce using rule 29 (sequence -> expr COMMA sequence .)
+    R_PAREN         reduce using rule 29 (sequence -> expr COMMA sequence .)
 
 WARNING: 
 WARNING: Conflicts:
@@ -3165,6 +3251,7 @@ WARNING: shift/reduce conflict for LT in state 33 resolved as shift
 WARNING: shift/reduce conflict for GT in state 33 resolved as shift
 WARNING: shift/reduce conflict for IN in state 33 resolved as shift
 WARNING: shift/reduce conflict for CONS in state 33 resolved as shift
+WARNING: shift/reduce conflict for L_BRACK in state 33 resolved as shift
 WARNING: shift/reduce conflict for R_PAREN in state 37 resolved as shift
 WARNING: shift/reduce conflict for POW in state 41 resolved as shift
 WARNING: shift/reduce conflict for MULT in state 41 resolved as shift
@@ -3182,6 +3269,7 @@ WARNING: shift/reduce conflict for LT in state 41 resolved as shift
 WARNING: shift/reduce conflict for GT in state 41 resolved as shift
 WARNING: shift/reduce conflict for IN in state 41 resolved as shift
 WARNING: shift/reduce conflict for CONS in state 41 resolved as shift
+WARNING: shift/reduce conflict for L_BRACK in state 41 resolved as shift
 WARNING: shift/reduce conflict for POW in state 42 resolved as shift
 WARNING: shift/reduce conflict for MULT in state 42 resolved as shift
 WARNING: shift/reduce conflict for DIV in state 42 resolved as shift
@@ -3198,6 +3286,7 @@ WARNING: shift/reduce conflict for LT in state 42 resolved as shift
 WARNING: shift/reduce conflict for GT in state 42 resolved as shift
 WARNING: shift/reduce conflict for IN in state 42 resolved as shift
 WARNING: shift/reduce conflict for CONS in state 42 resolved as shift
+WARNING: shift/reduce conflict for L_BRACK in state 42 resolved as shift
 WARNING: shift/reduce conflict for POW in state 43 resolved as shift
 WARNING: shift/reduce conflict for MULT in state 43 resolved as shift
 WARNING: shift/reduce conflict for DIV in state 43 resolved as shift
@@ -3214,6 +3303,7 @@ WARNING: shift/reduce conflict for LT in state 43 resolved as shift
 WARNING: shift/reduce conflict for GT in state 43 resolved as shift
 WARNING: shift/reduce conflict for IN in state 43 resolved as shift
 WARNING: shift/reduce conflict for CONS in state 43 resolved as shift
+WARNING: shift/reduce conflict for L_BRACK in state 43 resolved as shift
 WARNING: shift/reduce conflict for POW in state 44 resolved as shift
 WARNING: shift/reduce conflict for MULT in state 44 resolved as shift
 WARNING: shift/reduce conflict for DIV in state 44 resolved as shift
@@ -3230,6 +3320,7 @@ WARNING: shift/reduce conflict for LT in state 44 resolved as shift
 WARNING: shift/reduce conflict for GT in state 44 resolved as shift
 WARNING: shift/reduce conflict for IN in state 44 resolved as shift
 WARNING: shift/reduce conflict for CONS in state 44 resolved as shift
+WARNING: shift/reduce conflict for L_BRACK in state 44 resolved as shift
 WARNING: shift/reduce conflict for POW in state 47 resolved as shift
 WARNING: shift/reduce conflict for MULT in state 47 resolved as shift
 WARNING: shift/reduce conflict for DIV in state 47 resolved as shift
@@ -3246,6 +3337,7 @@ WARNING: shift/reduce conflict for LT in state 47 resolved as shift
 WARNING: shift/reduce conflict for GT in state 47 resolved as shift
 WARNING: shift/reduce conflict for IN in state 47 resolved as shift
 WARNING: shift/reduce conflict for CONS in state 47 resolved as shift
+WARNING: shift/reduce conflict for L_BRACK in state 47 resolved as shift
 WARNING: shift/reduce conflict for POW in state 48 resolved as shift
 WARNING: shift/reduce conflict for MULT in state 48 resolved as shift
 WARNING: shift/reduce conflict for DIV in state 48 resolved as shift
@@ -3262,6 +3354,7 @@ WARNING: shift/reduce conflict for LT in state 48 resolved as shift
 WARNING: shift/reduce conflict for GT in state 48 resolved as shift
 WARNING: shift/reduce conflict for IN in state 48 resolved as shift
 WARNING: shift/reduce conflict for CONS in state 48 resolved as shift
+WARNING: shift/reduce conflict for L_BRACK in state 48 resolved as shift
 WARNING: shift/reduce conflict for POW in state 49 resolved as shift
 WARNING: shift/reduce conflict for MULT in state 49 resolved as shift
 WARNING: shift/reduce conflict for DIV in state 49 resolved as shift
@@ -3278,6 +3371,7 @@ WARNING: shift/reduce conflict for LT in state 49 resolved as shift
 WARNING: shift/reduce conflict for GT in state 49 resolved as shift
 WARNING: shift/reduce conflict for IN in state 49 resolved as shift
 WARNING: shift/reduce conflict for CONS in state 49 resolved as shift
+WARNING: shift/reduce conflict for L_BRACK in state 49 resolved as shift
 WARNING: shift/reduce conflict for POW in state 50 resolved as shift
 WARNING: shift/reduce conflict for MULT in state 50 resolved as shift
 WARNING: shift/reduce conflict for DIV in state 50 resolved as shift
@@ -3294,6 +3388,7 @@ WARNING: shift/reduce conflict for LT in state 50 resolved as shift
 WARNING: shift/reduce conflict for GT in state 50 resolved as shift
 WARNING: shift/reduce conflict for IN in state 50 resolved as shift
 WARNING: shift/reduce conflict for CONS in state 50 resolved as shift
+WARNING: shift/reduce conflict for L_BRACK in state 50 resolved as shift
 WARNING: shift/reduce conflict for POW in state 51 resolved as shift
 WARNING: shift/reduce conflict for MULT in state 51 resolved as shift
 WARNING: shift/reduce conflict for DIV in state 51 resolved as shift
@@ -3310,6 +3405,7 @@ WARNING: shift/reduce conflict for LT in state 51 resolved as shift
 WARNING: shift/reduce conflict for GT in state 51 resolved as shift
 WARNING: shift/reduce conflict for IN in state 51 resolved as shift
 WARNING: shift/reduce conflict for CONS in state 51 resolved as shift
+WARNING: shift/reduce conflict for L_BRACK in state 51 resolved as shift
 WARNING: shift/reduce conflict for POW in state 52 resolved as shift
 WARNING: shift/reduce conflict for MULT in state 52 resolved as shift
 WARNING: shift/reduce conflict for DIV in state 52 resolved as shift
@@ -3326,6 +3422,7 @@ WARNING: shift/reduce conflict for LT in state 52 resolved as shift
 WARNING: shift/reduce conflict for GT in state 52 resolved as shift
 WARNING: shift/reduce conflict for IN in state 52 resolved as shift
 WARNING: shift/reduce conflict for CONS in state 52 resolved as shift
+WARNING: shift/reduce conflict for L_BRACK in state 52 resolved as shift
 WARNING: shift/reduce conflict for POW in state 53 resolved as shift
 WARNING: shift/reduce conflict for MULT in state 53 resolved as shift
 WARNING: shift/reduce conflict for DIV in state 53 resolved as shift
@@ -3342,6 +3439,7 @@ WARNING: shift/reduce conflict for LT in state 53 resolved as shift
 WARNING: shift/reduce conflict for GT in state 53 resolved as shift
 WARNING: shift/reduce conflict for IN in state 53 resolved as shift
 WARNING: shift/reduce conflict for CONS in state 53 resolved as shift
+WARNING: shift/reduce conflict for L_BRACK in state 53 resolved as shift
 WARNING: shift/reduce conflict for POW in state 54 resolved as shift
 WARNING: shift/reduce conflict for MULT in state 54 resolved as shift
 WARNING: shift/reduce conflict for DIV in state 54 resolved as shift
@@ -3358,6 +3456,7 @@ WARNING: shift/reduce conflict for LT in state 54 resolved as shift
 WARNING: shift/reduce conflict for GT in state 54 resolved as shift
 WARNING: shift/reduce conflict for IN in state 54 resolved as shift
 WARNING: shift/reduce conflict for CONS in state 54 resolved as shift
+WARNING: shift/reduce conflict for L_BRACK in state 54 resolved as shift
 WARNING: shift/reduce conflict for POW in state 55 resolved as shift
 WARNING: shift/reduce conflict for MULT in state 55 resolved as shift
 WARNING: shift/reduce conflict for DIV in state 55 resolved as shift
@@ -3374,6 +3473,7 @@ WARNING: shift/reduce conflict for LT in state 55 resolved as shift
 WARNING: shift/reduce conflict for GT in state 55 resolved as shift
 WARNING: shift/reduce conflict for IN in state 55 resolved as shift
 WARNING: shift/reduce conflict for CONS in state 55 resolved as shift
+WARNING: shift/reduce conflict for L_BRACK in state 55 resolved as shift
 WARNING: shift/reduce conflict for POW in state 56 resolved as shift
 WARNING: shift/reduce conflict for MULT in state 56 resolved as shift
 WARNING: shift/reduce conflict for DIV in state 56 resolved as shift
@@ -3390,3 +3490,4 @@ WARNING: shift/reduce conflict for LT in state 56 resolved as shift
 WARNING: shift/reduce conflict for GT in state 56 resolved as shift
 WARNING: shift/reduce conflict for IN in state 56 resolved as shift
 WARNING: shift/reduce conflict for CONS in state 56 resolved as shift
+WARNING: shift/reduce conflict for L_BRACK in state 56 resolved as shift

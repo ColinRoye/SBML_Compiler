@@ -45,8 +45,8 @@ t_R_BRACK = r']'
 t_COMMA = r','
 t_POW = r'\*\*'
 t_MULT= r'\*'
-t_DIV = r'div'
-t_MOD = r'mod'
+t_DIV = r'/'
+t_MOD = r'%'
 t_PLUS = r'\+'
 #t_UMINUS = r'-'
 t_MINUS = r'-'
@@ -89,10 +89,12 @@ def t_STRING(t):
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
-
+#
 def t_error(t):
-    print("SYNTAX ERROR: %s at %d" % (t.value[0], t.lexer.lineno))
-    t.lexer.skip(1)
+    if t.value[0] != ' ':
+        t.lexer.skip(len(t.value))
+    else:
+        t.lexer.skip(1)
 
 lexer = lex.lex()
 def reduce(expr):
@@ -143,7 +145,6 @@ class BooleanOpNode():
     def eval(self):
         e1 = reduce(self.e1)
         e2 = reduce(self.e2)
-        print("OP:", self.op)
         if self.op == '==':
             return e1 == e2
         if self.op == '!=':
@@ -170,9 +171,7 @@ class IndexNode():
         else:
             print("SEMANTIC ERROR")
     def eval(self):
-        print("\nDEBUG")
-        print(self.list)
-        print("DEBUG\n")
+
 
         return reduce(reduce(self.list)[reduce(self.ind)])
 
@@ -212,7 +211,11 @@ class TupleNode():
 
 def p_line(t):
     """line : expr SEMICOLON"""
-    t[0] = t[1].eval()
+    ret = t[1].eval()
+    if(ret != None):
+        t[0] = t[1].eval()
+    else:
+        print("SEMANTIC ERROR")
 
 def p_expr(t):
     """expr : INTEGER
@@ -253,7 +256,7 @@ def p_listop(t):
 
 def p_negationOp(t):
     """expr : NOT expr"""
-    t[0] = NegationOpNode(t[1],t[2])
+    t[0] = BooleanOpNode( "not " + t[2], 'AND', 'TRUE')
 
 
 def p_list_index(t):
@@ -308,20 +311,61 @@ def p_error(t):
 # grammar.
 precedence = (
 
-              ('left', 'MINUS','PLUS'),
+              ('left', 'MINUS','PLUS'), #mod has same prec?
+              ('left', 'MULT','DIV'),
+              ('right', 'POW'),
               ('left', 'L_BRACK'),
               ('left', 'L_PAREN'),
               ('right', 'UMINUS')
               )
 
 parser = yacc.yacc()
+#
+try:
+    filepath = sys.argv[1];
 
-while True:
-    try:
-        s = input("Enter a proposition: ")
-    except EOFError:
-        break
-    if not s:
-        continue
-    result = parser.parse(s, debug = True)
-    print("RESULT:", result)
+    deb = False
+    if('-d' in sys.argv):
+        sys.argv.remove('-d')
+        deb = True
+
+    if('-l' in sys.argv):
+        sys.argv.remove('-l')
+        result = parser.parse(sys.argv[1], debug=deb)
+        if(result != None):
+            print(result)
+    elif ('-r' in sys.argv[1]):
+        sys.argv.remove('-r')
+        while True:
+            try:
+                s = input("Enter a proposition: ")
+            except EOFError:
+                break
+            if not s:
+                continue
+            result = parser.parse(s, debug = deb)
+            if result != None:
+                print("RESULT:", result)
+
+    else:
+        with open(filepath) as fp:
+           line = fp.readline()
+           while line:
+               result = parser.parse(line, debug=deb)
+               if result != None:
+                   print(result)
+               line = fp.readline()
+except Exception as e:
+    pass
+    # print(e)
+    # pass
+
+# while True:
+#     try:
+#         s = input("Enter a proposition: ")
+#     except EOFError:
+#         break
+#     if not s:
+#         continue
+#     result = parser.parse(s, debug = True)
+#     print("RESULT:", result)

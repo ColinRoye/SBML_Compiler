@@ -8,9 +8,13 @@ import readline
 
 # List of token names
 
+scope = {};
+
+
 
 tokens = (
           'INTEGER', 'FLOAT',  'BOOLEAN', 'STRING', #DATA TYPES
+          'VARIABLE',
           'R_PAREN', 'L_PAREN',
           'R_BRACK', 'L_BRACK',
           'COMMA',
@@ -72,7 +76,6 @@ def t_BOOLEAN(t):
      t.value = BoolNode(t.value)
      return t
 
-
 def t_FLOAT(t):
     r'(((\d)*\.(\d+)((e(-?)\d+)?)))'
     t.value = NumNode(t.value)
@@ -88,10 +91,12 @@ def t_STRING(t):
      t.value = StrNode(t.value[1:-1])
      return t
 
-# def t_VARIABLE(t):
-#     r'[a-z]\d{0,2}'
-#     t.value = t.value
-#     return t
+def t_VARIABLE(t):
+     r'[a-zA-Z][a-zA-Z0-9_]*'
+     t.value = VarNode(t.value)
+     return t
+
+
 
 def t_newline(t):
     r'\n+'
@@ -107,6 +112,11 @@ lexer = lex.lex()
 def reduce(expr):
     if expr != None and hasattr(expr, 'nodeType'):
         while(hasattr(expr, 'nodeType')):
+            # if(isinstance(expr, VarNode)):
+            #     global scope
+            #     print("blahhhhh")
+            #     print(reduce(scope[expr.name]))
+            #     return reduce(scope[expr.name])
             expr = expr.eval()
         return expr
     else:
@@ -192,13 +202,19 @@ class BooleanOpNode():
 
 class IndexNode():
     def __init__(self, list, ind):
+        if(hasattr(list, "name")):
+            self.name = list.name;
         self.l =  list
         self.ind = ind
+        # if(isinstance(list, VarNode)):
+        #     self.name = list.name
         self.nodeType = "ind"
 
     def eval(self):
+
         rawList = reduce(reduce(self.l))
         rawIndex = reduce(self.ind)
+
         if(isinstance(rawIndex,int)):
             if(isinstance(rawList, list) or isinstance(rawList, str)):
                 if(rawIndex<len(rawList) and rawIndex >= 0):
@@ -206,6 +222,82 @@ class IndexNode():
             if(isinstance(rawList, tuple)):
                 if(rawIndex<=len(rawList) and rawIndex > 0):
                     return rawList[rawIndex-1]
+    # def singleEval(self):
+    #     if(isinstance(self.l, VarNode)):
+    #         self.val = (self.l.eval())[reduce(self.ind)]
+    #         return self.val
+    #     self.val = self.l[reduce(self.ind)]
+    #     return self.val
+    def assign(self, val):
+        global scope
+        print("bs")
+        print(reduce(scope['a'].l))
+        # self.l[rawIndex] = val
+        # rawIndex = scope['a']
+        # (self.l.singleEval())[0]=4
+        # print(self.l.singleEval()[])
+        # print((self.l.eval())[0])
+        # print(reduce())
+
+        # if(isinstance(rawIndex,int)):
+        #     if(isinstance(rawList, list) or isinstance(rawList, str)):
+        #         if(rawIndex<len(rawList) and rawIndex >= 0):
+        #             print(rawList)
+        #         else:
+        #             self.l = None
+        #     else:
+        #         self.l = None
+        # else:
+        #     self.l = None
+
+
+
+        # #indexNode(LIN,1)
+        # [[1],2,3][0][0] = 4;
+        # [1][0] = 4
+        # if list isinstance(var) || list isinstance (indexnode):
+        #     reduce(list)[ind] = val
+        # else:
+        #     list[ind] = val
+
+
+
+
+
+
+class AssignmentNode():
+    def __init__(self, node, val):
+        if(isinstance(node, VarNode)):
+            self.node = node
+            self.name = node.name
+            self.val = val
+            self.nodeType = "var"
+        else:
+            self.node = None
+            self.name = None
+            self.val = None
+            self.nodeType = None
+    def eval(self):
+        global scope
+        if(isinstance(self.node, VarNode)):
+            scope[self.name] = self.val
+            return "assign to var"
+
+
+
+
+
+class VarNode():
+    def __init__(self, name):
+        global scope
+        self.name = name
+        self.nodeType = "var"
+    def eval(self):
+        global scope
+        if(self.name in scope):
+            return reduce(scope[self.name])
+        else:
+            print(scope[self.name])
 
 
 
@@ -236,6 +328,7 @@ class BoolNode():
 
 class ListNode():
     def __init__(self, val):
+        self.l = val
         self.val = val
         self.nodeType = "list"
     def eval(self):
@@ -247,25 +340,75 @@ class TupleNode():
         self.nodeType = "tuple"
     def eval(self):
         return tuple(map(lambda x:reduce(x),self.val))
+#
+# class ListAssignmentNode():
+#     def __init__(self, name, index, val):
+#         global scope
+#         if(scope[name] and isinstance(scope[name], list)):
+#             self.name = name
+#             self.index = index
+#             self.val = val
+#             scope[name][index] = val
+#     def eval(self):
+#         return reduce(scope[self.name])
+#
+
 
 
 def p_line(t):
     """line : expr SEMICOLON"""
     ret = t[1].eval()
-
-    if(ret != None):
-        t[0] = t[1].eval()
-    else:
+    if(ret == None):
         print("SEMANTIC ERROR")
+    else:
+        t[0] = ret
+        #t[0] = t[1].eval()
+
 
 def p_expr(t):
     """expr : INTEGER
             | FLOAT
             | STRING
             | BOOLEAN
+            | VARIABLE
             | list
             | tuple"""
     t[0] = (t[1])
+
+
+class ListAssignmentNode():
+    def __init__(self, node, val, inds):
+        if(isinstance(node, VarNode)):
+            self.node = node
+            self.name = node.name
+            self.val = val
+            self.inds = inds
+            self.nodeType = "var"
+        else:
+            self.node = None
+            self.name = None
+            self.val = None
+            self.nodeType = None
+    def eval(self):
+        global scope
+        if(isinstance(self.node, VarNode) and scope[self.name]):
+            list = reduce(scope[self.name])
+            temp = list
+            for i in range (0, len(self.inds)-1):
+                index = reduce(i)
+                temp = temp[reduce(self.inds[index])]
+            index = reduce(self.inds[-1])
+            temp[index] = reduce(self.val)
+            scope[self.name] = list
+            return "list assign to var"
+
+
+
+
+def p_list_assignment(t):
+    """expr : expr indexSequenceList EQ expr"""
+    t[0] = ListAssignmentNode(t[1], t[4], t[2]);
+
 
 def p_tuple_index(t):
     """expr : HASHTAG INTEGER expr %prec HASHTAG"""
@@ -310,29 +453,27 @@ def p_listop(t):
             | expr CONS expr"""
     t[0] = ListOpNode(t[1],t[2],t[3])
 
-# def p_negationOp(t):
-#     """expr : NOT expr ? prec U"""
-#     if(isinstance(reduce(t[2]), bool)):
-#         t[0] = BooleanOpNode(BoolNode(not reduce(t[2])), 'AND', 'TRUE')
 def p_negationOp(t):
      'expr : NOT expr %prec UMINUS'
      t[0] = BooleanOpNode(not reduce(t[2]),'andalso',BoolNode('True'))
+
+# def p_list_index_assignment(t):
+#     """expr : expr L_BRACK expr R_BRACK EQ expr"""
+#     t[0] = ListAssignmentNode(t[1], t[3],t[6])
+#
+
 
 def p_list_index(t):
     """expr : expr L_BRACK expr R_BRACK"""
     t[0] = IndexNode(t[1], t[3])
 
-
-def p_list(t): #err
+def p_list(t):
     """list : L_BRACK sequence R_BRACK
             | L_BRACK R_BRACK"""
     if len(t) == 3:
         t[0] = ListNode([])
     else:
         t[0] = ListNode(t[2]);
-
-
-
 
 def p_sequence(t):
        """sequence : expr COMMA sequence
@@ -342,14 +483,46 @@ def p_sequence(t):
        else:
            t[0] = [t[1]]
 
-
-
-
 def p_parenthesized(t):
     """expr : L_PAREN expr R_PAREN"""
     t[0] = t[2]
 
 
+# class IndexSequenceNode():
+#     def __init__(self, node, val, indexList):
+#         self.node = node
+#         self.val = val
+#         self.indexList = indexList
+#     def eval(self):
+
+
+
+
+def p_assignment(t):
+    """expr : expr EQ expr"""
+    t[0] = AssignmentNode(t[1], t[3]);
+
+
+
+
+
+
+def p_index_sequence_list(t):
+    """indexSequenceList : indexSequenceList indexTkn
+                         | indexTkn"""
+    if(len(t) > 2):
+        t[0] = t[1]+t[2]
+    else:
+        t[0] = t[1]
+
+def p_index_tkn(t):
+    """indexTkn : L_BRACK INTEGER R_BRACK"""
+    t[0] = [t[2]]
+
+# def p_dec(t):
+#     """expr : VARIABLE"""
+#     global scope
+#     t[0] = VarNode(t[1], scope[t[1]]);
 
 
 def p_error(t):
@@ -414,6 +587,7 @@ try:
                line = fp.readline()
 except Exception as err:
     print("ERROR")
-    if(e):
+    # print(err)
+    if(err):
         print(err)
     pass

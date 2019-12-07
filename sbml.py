@@ -39,9 +39,14 @@ tokens = (
           'GT',
           'EQ',
           'HASHTAG',
-          'SEMICOLON'
+          'SEMICOLON',
+          'LC',
+          'RC',
+          'IF',
+          'WHILE',
+          'ELSE',
+          'PRINT'
           )
-
 
 t_SEMICOLON = r';'
 t_HASHTAG = r'\#'
@@ -70,6 +75,30 @@ t_NEQ = r'<>'
 t_LT = r'<'
 t_GT = r'>'
 t_EQ   = r'='
+t_LC = r'{'
+t_RC = r'}'
+
+
+def t_IF(t):
+    r'if'
+    t.value = t.value
+    return t
+
+def t_WHILE(t):
+    r'while'
+    t.value = t.value
+    return t
+
+def t_ELSE(t):
+    r'else'
+    t.value = t.value
+    return t
+
+def t_PRINT(t):
+     r'print'
+     t.value = t.value
+     return t
+
 
 def t_BOOLEAN(t):
      r'True|False'
@@ -77,7 +106,7 @@ def t_BOOLEAN(t):
      return t
 
 def t_FLOAT(t):
-    r'(((\d)*\.(\d+)((e(-?)\d+)?)))'
+    r'(((\d)+\.(\d+)((e(-?)\d+)?)))'
     t.value = NumNode(t.value)
     return t
 
@@ -96,12 +125,10 @@ def t_VARIABLE(t):
      t.value = VarNode(t.value)
      return t
 
-
-
 def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
-#
+
 def t_error(t):
     if t.value[0] != ' ':
         t.lexer.skip(len(t.value))
@@ -112,11 +139,6 @@ lexer = lex.lex()
 def reduce(expr):
     if expr != None and hasattr(expr, 'nodeType'):
         while(hasattr(expr, 'nodeType')):
-            # if(isinstance(expr, VarNode)):
-            #     global scope
-            #     print("blahhhhh")
-            #     print(reduce(scope[expr.name]))
-            #     return reduce(scope[expr.name])
             expr = expr.eval()
         return expr
     else:
@@ -206,12 +228,9 @@ class IndexNode():
             self.name = list.name;
         self.l =  list
         self.ind = ind
-        # if(isinstance(list, VarNode)):
-        #     self.name = list.name
         self.nodeType = "ind"
 
     def eval(self):
-
         rawList = reduce(reduce(self.l))
         rawIndex = reduce(self.ind)
 
@@ -222,47 +241,6 @@ class IndexNode():
             if(isinstance(rawList, tuple)):
                 if(rawIndex<=len(rawList) and rawIndex > 0):
                     return rawList[rawIndex-1]
-    # def singleEval(self):
-    #     if(isinstance(self.l, VarNode)):
-    #         self.val = (self.l.eval())[reduce(self.ind)]
-    #         return self.val
-    #     self.val = self.l[reduce(self.ind)]
-    #     return self.val
-    def assign(self, val):
-        global scope
-        print("bs")
-        print(reduce(scope['a'].l))
-        # self.l[rawIndex] = val
-        # rawIndex = scope['a']
-        # (self.l.singleEval())[0]=4
-        # print(self.l.singleEval()[])
-        # print((self.l.eval())[0])
-        # print(reduce())
-
-        # if(isinstance(rawIndex,int)):
-        #     if(isinstance(rawList, list) or isinstance(rawList, str)):
-        #         if(rawIndex<len(rawList) and rawIndex >= 0):
-        #             print(rawList)
-        #         else:
-        #             self.l = None
-        #     else:
-        #         self.l = None
-        # else:
-        #     self.l = None
-
-
-
-        # #indexNode(LIN,1)
-        # [[1],2,3][0][0] = 4;
-        # [1][0] = 4
-        # if list isinstance(var) || list isinstance (indexnode):
-        #     reduce(list)[ind] = val
-        # else:
-        #     list[ind] = val
-
-
-
-
 
 
 class AssignmentNode():
@@ -283,9 +261,31 @@ class AssignmentNode():
             scope[self.name] = self.val
             return "assign to var"
 
-
-
-
+class ListAssignmentNode():
+    def __init__(self, node, val, inds):
+        if(isinstance(node, VarNode)):
+            self.node = node
+            self.name = node.name
+            self.val = val
+            self.inds = inds
+            self.nodeType = "var"
+        else:
+            self.node = None
+            self.name = None
+            self.val = None
+            self.nodeType = None
+    def eval(self):
+        global scope
+        if(isinstance(self.node, VarNode) and scope[self.name]):
+            list = reduce(scope[self.name])
+            temp = list
+            for i in range (0, len(self.inds)-1):
+                index = reduce(i)
+                temp = temp[reduce(self.inds[index])]
+            index = reduce(self.inds[-1])
+            temp[index] = reduce(self.val)
+            scope[self.name] = list
+            return "list assign to var"
 
 class VarNode():
     def __init__(self, name):
@@ -298,9 +298,6 @@ class VarNode():
             return reduce(scope[self.name])
         else:
             print(scope[self.name])
-
-
-
 
 class NumNode():
     def __init__(self, val):
@@ -340,29 +337,136 @@ class TupleNode():
         self.nodeType = "tuple"
     def eval(self):
         return tuple(map(lambda x:reduce(x),self.val))
-#
-# class ListAssignmentNode():
-#     def __init__(self, name, index, val):
-#         global scope
-#         if(scope[name] and isinstance(scope[name], list)):
-#             self.name = name
-#             self.index = index
-#             self.val = val
-#             scope[name][index] = val
-#     def eval(self):
-#         return reduce(scope[self.name])
-#
+
+class BlockNode:
+    def __init__(self, block):
+        # self.expr = expr
+        self.block = block
+        self.nodeType = "stmt"
+    def eval(self):
+        for elm in self.block:
+            elm.eval()
+        return self
+
+class IfNode:
+    def __init__(self, expr, block):
+        self.expr = expr
+        self.block = block
+        self.nodeType = "stmt"
+    def eval(self):
+        if reduce(self.expr):
+            self.block.eval()
+class IfElseNode:
+    def __init__(self, expr, ifBlock, elseBlock):
+        self.expr = expr
+        self.ifBlock = ifBlock
+        self.elseBlock = elseBlock
+        self.nodeType = "stmt"
+    def eval(self):
+        if reduce(self.expr):
+            self.ifBlock.eval()
+        else:
+            self.elseBlock.eval()
+
+
+class WhileNode:
+    def __init__(self, expr, block):
+        self.expr = expr
+        self.block = block
+        self.nodeType = "stmt"
+    def eval(self):
+        while reduce(self.expr):
+            self.block.eval()
+
+
+class PrintNode:
+    def __init__(self, expr):
+        self.expr = expr
+        self.nodeType = "stmt"
+    def eval(self):
+        print(reduce(self.expr))
+        return self
 
 
 
-def p_line(t):
-    """line : expr SEMICOLON"""
-    ret = t[1].eval()
-    if(ret == None):
-        print("SEMANTIC ERROR")
+def p_program(t):
+    """program : block_list"""
+    # print(t[1][0].block)
+    # print(t[1].block)
+    # t[1][0].eval()
+    # t[1][0].eval()
+    (t[1][0].eval())
+    t[0] = "ok"
+
+def p_block_stmt_list(t):
+    """block_list : block_list stmt_list
+                  | stmt_list"""
+    if(len(t) > 2):
+        t[0] = t[1]+ t[2]
     else:
-        t[0] = ret
-        #t[0] = t[1].eval()
+        t[0] = t[1]
+
+def p_block_list(t):
+    """block_list : block_list block
+                  | block"""
+    if(len(t) > 2):
+        t[0] = t[1]+ [t[2]]
+    else:
+        t[0] = [t[1]]
+
+
+
+
+    if(len(t) > 2):
+        t[0] = t[1] + [t[2]]
+    else:
+        t[0] = [t[1]]
+
+
+def p_cond_stmt(t):
+    """cond_stmt : if
+                 | if_else
+                 | while"""
+    t[0] = t[1]
+
+def p_stmt_list(t):
+    """stmt_list : stmt_list stmt
+                 | stmt"""
+    if(len(t) > 2):
+        t[0] = t[1]+ [t[2]]
+    else:
+        t[0] = [t[1]]
+
+def p_block(t):
+    """block : LC block_list RC
+             | LC RC"""
+    if(len(t) > 3):
+        t[0] = BlockNode(t[2])
+    else:
+        t[0] = BlockNode()
+
+def p_print(t):
+    """print : PRINT L_PAREN expr R_PAREN"""
+    t[0] = PrintNode(t[3])
+def p_stmt(t):
+    """stmt : expr SEMICOLON
+            | print SEMICOLON
+            | assignment SEMICOLON
+            | cond_stmt"""
+    t[0] = t[1]
+
+def p_if_else(t):
+    """if_else : IF L_PAREN expr R_PAREN block ELSE block"""
+    t[0] = IfElseNode(t[3], t[5], t[7])
+
+def p_if(t):
+    """if : IF L_PAREN expr R_PAREN block"""
+    t[0] = IfNode(t[3], t[5])
+
+def p_while(t):
+    """while : WHILE L_PAREN expr R_PAREN block"""
+    t[0] = WhileNode(t[3], t[5])
+
 
 
 def p_expr(t):
@@ -375,45 +479,17 @@ def p_expr(t):
             | tuple"""
     t[0] = (t[1])
 
-
-class ListAssignmentNode():
-    def __init__(self, node, val, inds):
-        if(isinstance(node, VarNode)):
-            self.node = node
-            self.name = node.name
-            self.val = val
-            self.inds = inds
-            self.nodeType = "var"
-        else:
-            self.node = None
-            self.name = None
-            self.val = None
-            self.nodeType = None
-    def eval(self):
-        global scope
-        if(isinstance(self.node, VarNode) and scope[self.name]):
-            list = reduce(scope[self.name])
-            temp = list
-            for i in range (0, len(self.inds)-1):
-                index = reduce(i)
-                temp = temp[reduce(self.inds[index])]
-            index = reduce(self.inds[-1])
-            temp[index] = reduce(self.val)
-            scope[self.name] = list
-            return "list assign to var"
-
-
-
-
 def p_list_assignment(t):
-    """expr : expr indexSequenceList EQ expr"""
+    """assignment : expr indexSequenceList EQ expr"""
     t[0] = ListAssignmentNode(t[1], t[4], t[2]);
+def p_assignment(t):
+    """assignment : expr EQ expr"""
+    t[0] = AssignmentNode(t[1], t[3]);
 
 
 def p_tuple_index(t):
     """expr : HASHTAG INTEGER expr %prec HASHTAG"""
     t[0] = IndexNode(t[3], t[2])
-
 
 def p_tuple(t):
     """tuple : L_PAREN sequence R_PAREN
@@ -457,12 +533,6 @@ def p_negationOp(t):
      'expr : NOT expr %prec UMINUS'
      t[0] = BooleanOpNode(not reduce(t[2]),'andalso',BoolNode('True'))
 
-# def p_list_index_assignment(t):
-#     """expr : expr L_BRACK expr R_BRACK EQ expr"""
-#     t[0] = ListAssignmentNode(t[1], t[3],t[6])
-#
-
-
 def p_list_index(t):
     """expr : expr L_BRACK expr R_BRACK"""
     t[0] = IndexNode(t[1], t[3])
@@ -488,23 +558,6 @@ def p_parenthesized(t):
     t[0] = t[2]
 
 
-# class IndexSequenceNode():
-#     def __init__(self, node, val, indexList):
-#         self.node = node
-#         self.val = val
-#         self.indexList = indexList
-#     def eval(self):
-
-
-
-
-def p_assignment(t):
-    """expr : expr EQ expr"""
-    t[0] = AssignmentNode(t[1], t[3]);
-
-
-
-
 
 
 def p_index_sequence_list(t):
@@ -519,16 +572,8 @@ def p_index_tkn(t):
     """indexTkn : L_BRACK INTEGER R_BRACK"""
     t[0] = [t[2]]
 
-# def p_dec(t):
-#     """expr : VARIABLE"""
-#     global scope
-#     t[0] = VarNode(t[1], scope[t[1]]);
-
-
 def p_error(t):
     print("SYNTAX ERROR")
-
-
 
 precedence = (
         ('left','AND_ALSO','OR_ELSE'),
@@ -542,11 +587,9 @@ precedence = (
         ('left', 'L_BRACK','R_BRACK'),
         ('right','HASHTAG'),
         ('left','L_PAREN','R_PAREN')
-
 )
 
 parser = yacc.yacc()
-#
 
 filepath = sys.argv[1];
 
@@ -558,36 +601,34 @@ e = False
 if('-e' in sys.argv):
     sys.argv.remove('-e')
     e = True
-try:
-    if('-l' in sys.argv):
-        sys.argv.remove('-l')
-        result = parser.parse(sys.argv[1], debug=deb)
-        if(result != None):
-            print(result)
-    elif ('-r' in sys.argv[1]):
-        sys.argv.remove('-r')
-        while True:
-            try:
-                s = input("Enter a proposition: ")
-            except EOFError:
-                break
-            if not s:
-                continue
-            result = parser.parse(s, debug = deb)
-            if result != None:
-                print("RESULT:", result)
-
-    else:
-        with open(filepath) as fp:
-           line = fp.readline()
-           while line:
-               result = parser.parse(line, debug=deb)
-               if result != None:
-                   print(result)
-               line = fp.readline()
-except Exception as err:
-    print("ERROR")
-    # print(err)
-    if(err):
-        print(err)
-    pass
+# try:
+if('-l' in sys.argv):
+    sys.argv.remove('-l')
+    result = parser.parse(sys.argv[1], debug=deb)
+    if(result != None):
+        print(result)
+elif ('-r' in sys.argv[1]):
+    sys.argv.remove('-r')
+    while True:
+        try:
+            s = input("Enter a proposition: ")
+        except EOFError:
+            break
+        if not s:
+            continue
+        result = parser.parse(s, debug = deb)
+        if result != None:
+            print("RESULT:", result)
+else:
+    with open(filepath) as fp:
+       data = fp.read()
+       result = parser.parse(data, debug=deb)
+       if result != None:
+           pass
+           # print(result)
+#
+# except Exception as err:
+#     print("ERROR")
+#     if(err):
+#         print(err)
+#     pass

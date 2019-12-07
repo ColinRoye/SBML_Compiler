@@ -1,3 +1,18 @@
-a=[[[2]],[1]];
-a[1][0] = 4;
-a;
+{
+
+
+  if(1==2){
+    print("fail");
+  }else{
+    print("ok!");
+  }
+  n=2;
+  print("test");
+  while(n == 2){
+    print("ok3!");
+    n=3;
+  }
+  {
+    print("ok2!");
+  }
+}

@@ -57,17 +57,11 @@ t_R_BRACK = r']'
 t_COMMA = r','
 t_POW = r'\*\*'
 t_MULT= r'\*'
-t_DIVINT = r'div'
 t_DIV = r'/'
-t_MOD = r'mod'
 t_PLUS = r'\+'
 t_MINUS = r'-'
-t_IN = r'in'
 t_CONS = r'::'
 t_COLON = r':'
-t_NOT = r'not'
-t_AND_ALSO = r'andalso'
-t_OR_ELSE = r'orelse'
 t_LTE = r'<='
 t_GTE = r'>='
 t_EQ_EQ = r'=='
@@ -77,6 +71,26 @@ t_GT = r'>'
 t_EQ   = r'='
 t_LC = r'{'
 t_RC = r'}'
+
+
+def t_DIVINT(t):
+    r'div'
+    return t
+def t_MOD(t):
+    r'mod'
+    return t
+def t_IN(t):
+    r'in'
+    return t
+def t_NOT(t):
+    r'not'
+    return t
+def t_AND_ALSO(t):
+    r'andalso'
+    return t
+def t_OR_ELSE(t):
+    r'orelse'
+    return t
 
 
 def t_IF(t):
@@ -249,7 +263,7 @@ class AssignmentNode():
             self.node = node
             self.name = node.name
             self.val = val
-            self.nodeType = "var"
+            self.nodeType = "assignemnt"
         else:
             self.node = None
             self.name = None
@@ -258,7 +272,7 @@ class AssignmentNode():
     def eval(self):
         global scope
         if(isinstance(self.node, VarNode)):
-            scope[self.name] = self.val
+            scope[self.name] = reduce(self.val)
             return "assign to var"
 
 class ListAssignmentNode():
@@ -268,7 +282,7 @@ class ListAssignmentNode():
             self.name = node.name
             self.val = val
             self.inds = inds
-            self.nodeType = "var"
+            self.nodeType = "listAssignment"
         else:
             self.node = None
             self.name = None
@@ -291,7 +305,7 @@ class VarNode():
     def __init__(self, name):
         global scope
         self.name = name
-        self.nodeType = "var"
+        self.nodeType = "variable"
     def eval(self):
         global scope
         if(self.name in scope):
@@ -344,8 +358,12 @@ class BlockNode:
         self.block = block
         self.nodeType = "stmt"
     def eval(self):
+        temp = ""
         for elm in self.block:
-            elm.eval()
+            temp = elm.eval()
+            if(temp == None):
+                print("SEMANTIC ERROR")
+                exit()
         return self
 
 class IfNode:
@@ -356,6 +374,8 @@ class IfNode:
     def eval(self):
         if reduce(self.expr):
             self.block.eval()
+        return self
+
 class IfElseNode:
     def __init__(self, expr, ifBlock, elseBlock):
         self.expr = expr
@@ -367,6 +387,7 @@ class IfElseNode:
             self.ifBlock.eval()
         else:
             self.elseBlock.eval()
+        return self
 
 
 class WhileNode:
@@ -377,6 +398,7 @@ class WhileNode:
     def eval(self):
         while reduce(self.expr):
             self.block.eval()
+        return self
 
 
 class PrintNode:
@@ -395,7 +417,7 @@ def p_program(t):
     # print(t[1].block)
     # t[1][0].eval()
     # t[1][0].eval()
-    (t[1][0].eval())
+    t[1][0].eval()
     t[0] = "ok"
 
 def p_block_stmt_list(t):
@@ -482,6 +504,7 @@ def p_expr(t):
 def p_list_assignment(t):
     """assignment : expr indexSequenceList EQ expr"""
     t[0] = ListAssignmentNode(t[1], t[4], t[2]);
+
 def p_assignment(t):
     """assignment : expr EQ expr"""
     t[0] = AssignmentNode(t[1], t[3]);
@@ -533,6 +556,19 @@ def p_negationOp(t):
      'expr : NOT expr %prec UMINUS'
      t[0] = BooleanOpNode(not reduce(t[2]),'andalso',BoolNode('True'))
 
+
+def p_index_sequence_list(t):
+    """indexSequenceList : indexSequenceList indexTkn
+                         | indexTkn"""
+    if(len(t) > 2):
+        t[0] = t[1]+t[2]
+    else:
+        t[0] = t[1]
+
+def p_index_tkn(t):
+    """indexTkn : L_BRACK expr R_BRACK"""
+    t[0] = [t[2]]
+
 def p_list_index(t):
     """expr : expr L_BRACK expr R_BRACK"""
     t[0] = IndexNode(t[1], t[3])
@@ -560,20 +596,10 @@ def p_parenthesized(t):
 
 
 
-def p_index_sequence_list(t):
-    """indexSequenceList : indexSequenceList indexTkn
-                         | indexTkn"""
-    if(len(t) > 2):
-        t[0] = t[1]+t[2]
-    else:
-        t[0] = t[1]
-
-def p_index_tkn(t):
-    """indexTkn : L_BRACK INTEGER R_BRACK"""
-    t[0] = [t[2]]
 
 def p_error(t):
     print("SYNTAX ERROR")
+    exit()
 
 precedence = (
         ('left','AND_ALSO','OR_ELSE'),

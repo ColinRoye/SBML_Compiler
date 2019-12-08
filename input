@@ -1,12 +1,1 @@
-{
-print(1+2*3/4-7);
-print((1+2)*(3/(4-7)));
-print((not (False orelse False)) andalso (not False andalso not False));
-print([[1, 2, 3], ["a", "b", "c"], [4.0, 5.0, 6.0]][1]);
-print([[1, 2, 3], ["a", "b", "c"], [4.0, 5.0, 6.0]][2][1]);
-print('a' in ("bce" + "def" + "ghi" + "yza"));
-print(#2(7, 8, 9) == [9, 8, 7][1]);
-print([1, 2, 3][1 + 1] > [4, 5, 6][1 - 1] orelse "abc"[2] < "xyz"[0]);
-print([1, 2, 3][1 * 2] * [4, 5, 6][2 div 1] - [7, 8, 9][17 mod 3]);
-print(([1, 2, 3][1 + 1] > [4, 5, 6][1 - 1] orelse "abc"[2] < "xyz"[0]) andalso (#2(7, 8, 9) == [9, 8, 7][1]));
-}
+ {{ print(hi); }}

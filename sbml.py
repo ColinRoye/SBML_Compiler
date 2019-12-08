@@ -637,34 +637,32 @@ e = False
 if('-e' in sys.argv):
     sys.argv.remove('-e')
     e = True
-# try:
-if('-l' in sys.argv):
-    sys.argv.remove('-l')
-    result = parser.parse(sys.argv[1], debug=deb)
-    if(result != None):
-        print(result)
-elif ('-r' in sys.argv[1]):
-    sys.argv.remove('-r')
-    while True:
-        try:
-            s = input("Enter a proposition: ")
-        except EOFError:
-            break
-        if not s:
-            continue
-        result = parser.parse(s, debug = deb)
-        if result != None:
-            print("RESULT:", result)
-else:
-    with open(filepath) as fp:
-       data = fp.read()
-       result = parser.parse(data, debug=deb)
-       if result != None:
-           pass
-           # print(result)
-#
-# except Exception as err:
-#     print("ERROR")
-#     if(err):
-#         print(err)
-#     pass
+try:
+    if('-l' in sys.argv):
+        sys.argv.remove('-l')
+        result = parser.parse(sys.argv[1], debug=deb)
+        if(result != None):
+            print(result)
+    elif ('-r' in sys.argv[1]):
+        sys.argv.remove('-r')
+        while True:
+            try:
+                s = input("Enter a proposition: ")
+            except EOFError:
+                break
+            if not s:
+                continue
+            result = parser.parse(s, debug = deb)
+            if result != None:
+                print("RESULT:", result)
+    else:
+        with open(filepath) as fp:
+           data = fp.read()
+           result = parser.parse(data, debug=deb)
+           if result != None:
+               pass
+               # print(result)
+    #
+except Exception as err:
+    print("SEMANTIC ERROR")
+    exit()

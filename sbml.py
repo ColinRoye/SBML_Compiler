@@ -76,22 +76,26 @@ t_RC = r'}'
 def t_DIVINT(t):
     r'div'
     return t
+
 def t_MOD(t):
     r'mod'
     return t
+
 def t_IN(t):
     r'in'
     return t
+
 def t_NOT(t):
     r'not'
     return t
+
 def t_AND_ALSO(t):
     r'andalso'
     return t
+
 def t_OR_ELSE(t):
     r'orelse'
     return t
-
 
 def t_IF(t):
     r'if'
@@ -113,14 +117,13 @@ def t_PRINT(t):
      t.value = t.value
      return t
 
-
 def t_BOOLEAN(t):
      r'True|False'
      t.value = BoolNode(t.value)
      return t
 
 def t_FLOAT(t):
-    r'(((\d)+\.(\d+)((e(-?)\d+)?)))'
+    r'(((\d*)\.(\d*)((e(-?)\d+)?)))'
     t.value = NumNode(t.value)
     return t
 
@@ -201,7 +204,7 @@ class ListOpNode():
     def eval(self):
         var = reduce(self.var)
         l = reduce(self.l)
-        if(isinstance(l, list)):
+        if(isinstance(l, list) or isinstance(l, str)):
             if(self.op == 'in'):
                 return var in l
             if(self.op == '::'):
@@ -229,6 +232,10 @@ class BooleanOpNode():
             return e1 > e2
         if self.op == '<':
             return e1 < e2
+        if(isinstance((e1), bool)):
+            if self.op == 'not':
+                return not e1
+
         if(isinstance((e1), bool) and isinstance((e2), bool)):
             if self.op == 'andalso':
                 return e1 and e2
@@ -406,6 +413,9 @@ class PrintNode:
         self.expr = expr
         self.nodeType = "stmt"
     def eval(self):
+        if(reduce(self.expr) == None):
+            print("SEMANTIC ERROR")
+            exit()
         print(reduce(self.expr))
         return self
 
@@ -554,7 +564,7 @@ def p_listop(t):
 
 def p_negationOp(t):
      'expr : NOT expr %prec UMINUS'
-     t[0] = BooleanOpNode(not reduce(t[2]),'andalso',BoolNode('True'))
+     t[0] = BooleanOpNode(t[2] , 'not', '')
 
 
 def p_index_sequence_list(t):

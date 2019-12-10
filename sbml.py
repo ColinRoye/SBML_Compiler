@@ -8,13 +8,12 @@ import readline
 
 # List of token names
 
-scope = {};
-
+scopeStack = [{}]
 
 
 tokens = (
           'INTEGER', 'FLOAT',  'BOOLEAN', 'STRING', #DATA TYPES
-          'VARIABLE',
+          'VARIABLE', 'FUN',
           'R_PAREN', 'L_PAREN',
           'R_BRACK', 'L_BRACK',
           'COMMA',
@@ -72,6 +71,10 @@ t_EQ   = r'='
 t_LC = r'{'
 t_RC = r'}'
 
+
+def t_FUN(t):
+    r'fun'
+    return t
 
 def t_DIVINT(t):
     r'div'
@@ -224,14 +227,17 @@ class BooleanOpNode():
             return e1 == e2
         if self.op == '<>':
             return e1 != e2
-        if self.op == '<=':
-            return e1 <= e2
-        if self.op == '>=':
-            return e1 >= e2
-        if self.op == '>':
-            return e1 > e2
-        if self.op == '<':
-            return e1 < e2
+
+        if(isinstance((e1), int) and isinstance((e2), int)):
+            if self.op == '<=':
+                return e1 <= e2
+            if self.op == '>=':
+                return e1 >= e2
+            if self.op == '>':
+                return e1 > e2
+            if self.op == '<':
+                return e1 < e2
+
         if(isinstance((e1), bool)):
             if self.op == 'not':
                 return not e1
@@ -279,7 +285,7 @@ class AssignmentNode():
     def eval(self):
         global scope
         if(isinstance(self.node, VarNode)):
-            scope[self.name] = reduce(self.val)
+            setVal(self.name, reduce(self.val))
             return "assign to var"
 
 class ListAssignmentNode():
@@ -297,15 +303,15 @@ class ListAssignmentNode():
             self.nodeType = None
     def eval(self):
         global scope
-        if(isinstance(self.node, VarNode) and scope[self.name]):
-            list = reduce(scope[self.name])
+        if(isinstance(self.node, VarNode) and getVal(self.name)):
+            list = reduce(getVal(self.name))
             temp = list
             for i in range (0, len(self.inds)-1):
                 index = reduce(i)
                 temp = temp[reduce(self.inds[index])]
             index = reduce(self.inds[-1])
             temp[index] = reduce(self.val)
-            scope[self.name] = list
+            setVal(self.name, list)
             return "list assign to var"
 
 class VarNode():
@@ -315,10 +321,8 @@ class VarNode():
         self.nodeType = "variable"
     def eval(self):
         global scope
-        if(self.name in scope):
-            return reduce(scope[self.name])
-        else:
-            print(scope[self.name])
+        if(getVal(self.name) != None):
+            return reduce(getVal(self.name))
 
 class NumNode():
     def __init__(self, val):
@@ -419,16 +423,93 @@ class PrintNode:
         print(reduce(self.expr))
         return self
 
+def addScope():
+    scopeStack.append({})
+
+def removeScope():
+    scopeStack.pop()
+
+def getVal(name):
+    for scope in scopeStack[::-1]:
+        if name in scope:
+            return scope[name]
+def setVal(name, val):
+    scopeStack[-1][name] = val
+
+class FunNode:
+    def __init__(self, name, vars, block, ret):
+        self.vars = vars
+        self.name = name
+        self.block = block
+        self.ret = ret
+        self.nodeType = "funcallassignment"
+    def eval(self, inputVars):
+        self.initScope(inputVars)
+        self.block.eval()
+        output = reduce(self.ret)
+        removeScope()
+        return output
+
+
+    def initScope(self, inputVars):
+        addScope()
+        if(len(self.vars) != len(inputVars)):
+            print("SEMANTIC ERROR")
+            exit()
+        count = 0
+        for name in self.vars:
+            AssignmentNode(name, inputVars[count]).eval()
+            count = count+1
+
+
+
+
+class FunAssignmentNode:
+    def __init__(self, name, vars, block, ret):
+        self.vars = vars
+        self.name = name
+        self.block = block
+        self.ret = ret
+        self.nodeType = "funcallassignment"
+    def eval(self):
+        #hack###
+        setVal(self.name.name, FunNode(self.name, self.vars, self.block, self.ret))
+        return "ok"
+
+
+class FunCallNode:
+    def __init__(self, name, sequence):
+        self.name = name
+        self.sequence = sequence
+        self.nodeType = "funcallassignment"
+    def eval(self):
+        return (getVal(self.name.name).eval(self.sequence))
+
 
 
 def p_program(t):
-    """program : block_list"""
+    """program : fun_list block
+               | block"""
     # print(t[1][0].block)
     # print(t[1].block)
     # t[1][0].eval()
     # t[1][0].eval()
-    t[1][0].eval()
+    if(len(t) == 3):
+        for elm in t[1]:
+            elm.eval()
+        t[2].eval()
+    else:
+        t[1].eval()
     t[0] = "ok"
+
+def p_fun_list(t):
+    """fun_list : fun_list fun_assignment
+                | fun_assignment"""
+    if(len(t) > 2):
+        t[0] = t[1]+ [t[2]]
+    else:
+        t[0] = [t[1]]
+
 
 def p_block_stmt_list(t):
     """block_list : block_list stmt_list
@@ -484,7 +565,8 @@ def p_stmt(t):
     """stmt : expr SEMICOLON
             | print SEMICOLON
             | assignment SEMICOLON
-            | cond_stmt"""
+            | cond_stmt
+            | fun_assignment"""
     t[0] = t[1]
 
 def p_if_else(t):
@@ -506,10 +588,34 @@ def p_expr(t):
             | FLOAT
             | STRING
             | BOOLEAN
+            | fun_call
             | VARIABLE
             | list
             | tuple"""
     t[0] = (t[1])
+
+
+
+def p_fun_call(t):
+    """fun_call : VARIABLE L_PAREN sequence R_PAREN
+                | VARIABLE L_PAREN  R_PAREN"""
+    if(len(t) == 5):
+        t[0] = FunCallNode(t[1], t[3]);
+    else:
+        t[0] = FunCallNode(t[1], []);
+
+
+
+def p_fun_assignment(t):
+    """fun_assignment : FUN VARIABLE L_PAREN sequence R_PAREN EQ block expr SEMICOLON
+                  | FUN VARIABLE L_PAREN R_PAREN EQ block expr SEMICOLON"""
+    if(len(t) == 10):
+        t[0] = FunAssignmentNode(t[2], t[4], t[7], t[8]);
+    else:
+        t[0] = FunAssignmentNode(t[2], [], t[6], t[7]);
+
+
+
 
 def p_list_assignment(t):
     """assignment : expr indexSequenceList EQ expr"""
@@ -662,7 +768,7 @@ try:
            if result != None:
                pass
                # print(result)
-    #
+
 except Exception as err:
     print("SEMANTIC ERROR")
     exit()
